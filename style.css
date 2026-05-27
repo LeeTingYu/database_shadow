@@ -10,12 +10,12 @@
     --mid-red: #e05c2a;
     --hot-red: #8b1a1a;
     
-    --bg-dark: #0d1117;
-    --bg-card: rgba(13, 17, 23, 0.92);
-    --bg-input: rgba(255, 255, 255, 0.08);
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.6);
-    --border: rgba(255, 255, 255, 0.12);
+    --bg-dark: #f5f0e8;
+    --bg-card: rgba(255, 252, 245, 0.96);
+    --bg-input: rgba(0, 0, 0, 0.05);
+    --text-primary: #2c2416;
+    --text-secondary: rgba(44, 36, 22, 0.55);
+    --border: rgba(44, 36, 22, 0.12);
     --accent: #2d7dd2;
     
     --drawer-radius: 20px;
@@ -360,7 +360,7 @@ html, body {
 }
 
 .route-btn:disabled {
-    background: var(--bg-input);
+    background: rgba(44, 36, 22, 0.08);
     color: var(--text-secondary);
     cursor: not-allowed;
 }
@@ -457,7 +457,7 @@ html, body {
     right: 0;
     bottom: 0;
     z-index: 500;
-    background: rgba(13, 17, 23, 0.7);
+    background: rgba(245, 240, 232, 0.7);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
