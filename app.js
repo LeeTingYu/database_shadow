@@ -3,7 +3,7 @@
 // 色階：深藍（涼爽）→ 深紅（炎熱）
 // ============================================
 
-const API_URL = 'https://flap-tactless-tamper.ngrok.io';
+const API_URL = 'http://localhost:5000';
 
 // ============ 地圖初始化 ============
 const map = L.map('map', {
@@ -12,7 +12,7 @@ const map = L.map('map', {
 }).setView([25.0330, 121.5654], 14);
 
 // 深色地圖底圖
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap © CartoDB',
     subdomains: 'abcd',
     maxZoom: 19
