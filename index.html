@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>陰影導航 Shadow Nav</title>
+    
+    <!-- Leaflet 地圖 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- 字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 全螢幕地圖 -->
+    <div id="map"></div>
+
+    <!-- 頂部標題列 -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="app-title">
+                <span class="title-icon">☀️</span>
+                <span class="title-text">陰影導航</span>
+            </div>
+            <button class="gps-btn" id="gpsBtn" title="定位我的位置">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+                    <circle cx="12" cy="12" r="9" stroke-dasharray="2 4"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- 浮動提示 -->
+    <div class="hint-bar" id="hintBar">
+        點擊地圖設定起點 📍
+    </div>
+
+    <!-- 色階說明 -->
+    <div class="legend">
+        <div class="legend-label">涼爽</div>
+        <div class="legend-gradient"></div>
+        <div class="legend-label">炎熱</div>
+    </div>
+
+    <!-- 底部抽屜 -->
+    <div class="drawer" id="drawer">
+        <div class="drawer-handle" id="drawerHandle"></div>
+
+        <!-- 搜尋區 -->
+        <div class="search-section">
+            <div class="search-row">
+                <div class="search-dot start-dot"></div>
+                <input type="text" class="search-input" id="startInput" 
+                       placeholder="起點（點地圖或輸入地址）" autocomplete="off">
+                <button class="clear-btn" id="clearStart">✕</button>
+            </div>
+            <div class="search-divider"></div>
+            <div class="search-row">
+                <div class="search-dot end-dot"></div>
+                <input type="text" class="search-input" id="endInput" 
+                       placeholder="終點（點地圖或輸入地址）" autocomplete="off">
+                <button class="clear-btn" id="clearEnd">✕</button>
+            </div>
+        </div>
+
+        <!-- 行政區快選 -->
+        <div class="district-section">
+            <div class="district-scroll">
+                <button class="district-chip" data-lat="25.0329" data-lng="121.5196">中正</button>
+                <button class="district-chip" data-lat="25.0632" data-lng="121.5130">大同</button>
+                <button class="district-chip" data-lat="25.0631" data-lng="121.5302">中山</button>
+                <button class="district-chip" data-lat="25.0498" data-lng="121.5775">松山</button>
+                <button class="district-chip" data-lat="25.0268" data-lng="121.5425">大安</button>
+                <button class="district-chip" data-lat="25.0351" data-lng="121.4994">萬華</button>
+                <button class="district-chip" data-lat="25.0338" data-lng="121.5645">信義</button>
+                <button class="district-chip" data-lat="25.0934" data-lng="121.5263">士林</button>
+                <button class="district-chip" data-lat="25.1324" data-lng="121.4988">北投</button>
+                <button class="district-chip" data-lat="25.0657" data-lng="121.5983">內湖</button>
+                <button class="district-chip" data-lat="25.0553" data-lng="121.6069">南港</button>
+                <button class="district-chip" data-lat="24.9994" data-lng="121.5694">文山</button>
+            </div>
+        </div>
+
+        <!-- 計算按鈕 -->
+        <button class="route-btn" id="routeBtn" disabled>
+            <span id="routeBtnText">請設定起點和終點</span>
+        </button>
+
+        <!-- 路徑結果 -->
+        <div class="result-section" id="resultSection" style="display:none">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statDistance">—</div>
+                    <div class="stat-label">距離</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statShade">—</div>
+                    <div class="stat-label">遮蔭率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTime">—</div>
+                    <div class="stat-label">預估時間</div>
+                </div>
+            </div>
+
+            <!-- 遮蔭溫度計 -->
+            <div class="shade-meter">
+                <div class="shade-meter-bar">
+                    <div class="shade-meter-fill" id="shadeMeterFill"></div>
+                    <div class="shade-meter-thumb" id="shadeMeterThumb"></div>
+                </div>
+                <div class="shade-meter-labels">
+                    <span>炎熱</span>
+                    <span>涼爽</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading 遮罩 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">計算最涼爽路線中...</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

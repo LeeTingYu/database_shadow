@@ -1,0 +1,510 @@
+/* ============================================
+   陰影導航 - 手機版樣式
+   深藍（涼）→ 深紅（熱）色階
+   ============================================ */
+
+:root {
+    --cool-blue: #1a3a6b;
+    --mid-blue: #2d7dd2;
+    --neutral: #f0c040;
+    --mid-red: #e05c2a;
+    --hot-red: #8b1a1a;
+    
+    --bg-dark: #0d1117;
+    --bg-card: rgba(13, 17, 23, 0.92);
+    --bg-input: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --border: rgba(255, 255, 255, 0.12);
+    --accent: #2d7dd2;
+    
+    --drawer-radius: 20px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+/* ============ 地圖 ============ */
+#map {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* 隱藏 Leaflet 標誌 */
+.leaflet-control-attribution {
+    font-size: 9px;
+    opacity: 0.5;
+}
+
+/* ============ 頂部列 ============ */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    pointer-events: none;
+}
+
+.top-bar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: all;
+}
+
+.app-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.title-icon {
+    font-size: 18px;
+}
+
+.title-text {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+}
+
+.gps-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+}
+
+.gps-btn:active {
+    transform: scale(0.92);
+    background: rgba(45, 125, 210, 0.4);
+}
+
+/* ============ 浮動提示 ============ */
+.hint-bar {
+    position: fixed;
+    top: calc(70px + env(safe-area-inset-top, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.hint-bar.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+/* ============ 色階圖例 ============ */
+.legend {
+    position: fixed;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 12px 8px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.legend-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    writing-mode: horizontal-tb;
+    font-family: 'Space Mono', monospace;
+}
+
+.legend-gradient {
+    width: 16px;
+    height: 120px;
+    border-radius: 8px;
+    background: linear-gradient(
+        to bottom,
+        #1a3a6b,
+        #2d7dd2,
+        #4ab8c0,
+        #f0c040,
+        #e05c2a,
+        #8b1a1a
+    );
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ============ 底部抽屜 ============ */
+.drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: var(--bg-card);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top-left-radius: var(--drawer-radius);
+    border-top-right-radius: var(--drawer-radius);
+    border-top: 1px solid var(--border);
+    padding: 0 16px;
+    padding-bottom: calc(16px + var(--safe-bottom));
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.drawer-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    margin: 12px auto 16px;
+    cursor: grab;
+}
+
+/* ============ 搜尋區 ============ */
+.search-section {
+    background: var(--bg-input);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.search-row {
+    display: flex;
+    align-items: center;
+    padding: 4px 12px;
+    gap: 10px;
+    min-height: 50px;
+}
+
+.search-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid;
+}
+
+.start-dot {
+    background: #22c55e;
+    border-color: #22c55e;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+.end-dot {
+    background: #ef4444;
+    border-color: #ef4444;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    min-width: 0;
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.clear-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.clear-btn:active {
+    background: rgba(255,255,255,0.1);
+}
+
+.search-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 12px;
+}
+
+/* ============ 行政區快選 ============ */
+.district-section {
+    margin-bottom: 12px;
+}
+
+.district-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 2px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.district-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.district-chip {
+    flex-shrink: 0;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-family: 'Noto Sans TC', sans-serif;
+    padding: 6px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.district-chip:active {
+    background: rgba(45, 125, 210, 0.3);
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+/* ============ 計算按鈕 ============ */
+.route-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.route-btn:enabled {
+    background: linear-gradient(135deg, var(--cool-blue), var(--mid-blue));
+    color: white;
+    box-shadow: 0 4px 20px rgba(45, 125, 210, 0.4);
+}
+
+.route-btn:enabled:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 10px rgba(45, 125, 210, 0.3);
+}
+
+.route-btn:disabled {
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+/* ============ 結果區 ============ */
+.result-section {
+    margin-top: 4px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.stat-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============ 遮蔭溫度計 ============ */
+.shade-meter {
+    margin-bottom: 8px;
+}
+
+.shade-meter-bar {
+    position: relative;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(
+        to right,
+        #8b1a1a,
+        #e05c2a,
+        #f0c040,
+        #4ab8c0,
+        #2d7dd2,
+        #1a3a6b
+    );
+    margin-bottom: 6px;
+}
+
+.shade-meter-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.4);
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.shade-meter-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--bg-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.shade-meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============ Loading 遮罩 ============ */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 500;
+    background: rgba(13, 17, 23, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--mid-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ============ 地圖 Marker ============ */
+.custom-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.custom-marker-inner {
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    transform: rotate(45deg);
+}
