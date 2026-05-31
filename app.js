@@ -3,7 +3,7 @@
 // 色階：深藍（涼爽）→ 深紅（炎熱）
 // ============================================
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://clench-outrank-moustache.ngrok-free.dev';
 
 // ============ 地圖初始化 ============
 const map = L.map('map', {
