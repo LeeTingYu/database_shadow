@@ -4,136 +4,642 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>陰影導航 Shadow Nav</title>
-    
-    <!-- Leaflet 地圖 -->
+    <title>陰影導航</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- 字體 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --card: rgba(255,252,245,0.96);
+            --border: rgba(44,36,22,0.12);
+            --text: #2c2416;
+            --text-dim: rgba(44,36,22,0.55);
+            --accent: #2d7dd2;
+            --green: #22c55e;
+            --red: #ef4444;
+            --safe: env(safe-area-inset-bottom, 0px);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { width:100%; height:100vh; overflow:hidden; font-family:'Noto Sans TC',sans-serif; background:var(--bg); }
+
+        /* ── 地圖 ── */
+        #map { position:fixed; inset:0; z-index:1; }
+
+        /* ── 頂部列 ── */
+        .top-bar {
+            position:fixed; top:0; left:0; right:0; z-index:100;
+            padding:12px 16px;
+            padding-top:calc(12px + env(safe-area-inset-top,0px));
+            display:flex; justify-content:space-between; align-items:center;
+            pointer-events:none;
+        }
+        .app-brand {
+            display:flex; align-items:center; gap:8px;
+            background:var(--card); backdrop-filter:blur(20px);
+            padding:8px 16px; border-radius:100px;
+            border:1px solid var(--border);
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            pointer-events:all;
+        }
+        .app-brand .icon { font-size:18px; }
+        .app-brand .name { font-size:14px; font-weight:700; color:var(--text); }
+
+        /* 時間顯示 */
+        .time-badge {
+            display:flex; flex-direction:column; align-items:flex-end;
+            background:var(--card); backdrop-filter:blur(20px);
+            padding:8px 14px; border-radius:14px;
+            border:1px solid var(--border);
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            pointer-events:all;
+        }
+        .time-badge .current-time { font-size:18px; font-weight:700; font-family:'Space Mono',monospace; color:var(--text); }
+        .time-badge .shade-time { font-size:11px; color:var(--text-dim); }
+
+        /* ── 提示 ── */
+        .hint {
+            position:fixed; top:calc(80px + env(safe-area-inset-top,0px));
+            left:50%; transform:translateX(-50%);
+            z-index:100; background:var(--card); backdrop-filter:blur(20px);
+            padding:8px 20px; border-radius:100px;
+            border:1px solid var(--border); font-size:13px; color:var(--text-dim);
+            white-space:nowrap; box-shadow:0 4px 20px rgba(0,0,0,0.1);
+            transition:opacity 0.3s, transform 0.3s;
+        }
+        .hint.hidden { opacity:0; pointer-events:none; transform:translateX(-50%) translateY(-8px); }
+
+        /* ── 色階 ── */
+        .legend {
+            position:fixed; right:12px; top:50%; transform:translateY(-50%);
+            z-index:100; display:flex; flex-direction:column; align-items:center; gap:6px;
+            background:var(--card); backdrop-filter:blur(20px);
+            padding:12px 8px; border-radius:16px;
+            border:1px solid var(--border);
+        }
+        .legend-label { font-size:10px; color:var(--text-dim); }
+        .legend-gradient {
+            width:14px; height:100px; border-radius:7px;
+            background:linear-gradient(to bottom,#1a3a6b,#2d7dd2,#4ab8c0,#f0c040,#e05c2a,#8b1a1a);
+        }
+
+        /* ── 底部抽屜 ── */
+        .drawer {
+            position:fixed; bottom:0; left:0; right:0; z-index:200;
+            background:var(--card); backdrop-filter:blur(30px);
+            border-top:1px solid var(--border);
+            border-radius:20px 20px 0 0;
+            padding:0 16px calc(16px + var(--safe));
+            box-shadow:0 -8px 40px rgba(0,0,0,0.1);
+            transition:transform 0.4s cubic-bezier(0.32,0.72,0,1);
+        }
+        .drawer.hidden { transform:translateY(100%); }
+        .drawer-handle { width:36px; height:4px; background:rgba(44,36,22,0.15); border-radius:2px; margin:12px auto 16px; }
+
+        /* ── 搜尋 ── */
+        .search-box {
+            background:rgba(44,36,22,0.06); border:1px solid var(--border);
+            border-radius:14px; overflow:hidden; margin-bottom:12px;
+        }
+        .search-row { display:flex; align-items:center; padding:4px 12px; gap:10px; min-height:48px; }
+        .dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
+        .dot.start { background:var(--green); box-shadow:0 0 8px rgba(34,197,94,0.4); }
+        .dot.end   { background:var(--red);   box-shadow:0 0 8px rgba(239,68,68,0.4); }
+        .search-input { flex:1; background:none; border:none; outline:none; font-size:14px; color:var(--text); font-family:'Noto Sans TC',sans-serif; }
+        .search-input::placeholder { color:var(--text-dim); font-size:13px; }
+        .search-divider { height:1px; background:var(--border); margin:0 12px; }
+        .clear-btn { background:none; border:none; color:var(--text-dim); font-size:13px; cursor:pointer; padding:4px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+
+        /* 行政區 */
+        .district-scroll { display:flex; gap:8px; overflow-x:auto; padding:4px 2px; margin-bottom:12px; scrollbar-width:none; }
+        .district-scroll::-webkit-scrollbar { display:none; }
+        .chip { flex-shrink:0; background:rgba(44,36,22,0.06); border:1px solid var(--border); color:var(--text-dim); font-size:12px; padding:5px 13px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
+        .chip:active { background:rgba(45,125,210,0.15); border-color:var(--accent); color:var(--accent); }
+
+        /* 計算按鈕 */
+        .route-btn {
+            width:100%; padding:15px; border-radius:14px; border:none;
+            font-size:15px; font-weight:700; font-family:'Noto Sans TC',sans-serif;
+            cursor:pointer; transition:all 0.2s; margin-bottom:12px;
+        }
+        .route-btn:enabled { background:linear-gradient(135deg,#1a3a6b,#2d7dd2); color:white; box-shadow:0 4px 20px rgba(45,125,210,0.3); }
+        .route-btn:enabled:active { transform:scale(0.98); }
+        .route-btn:disabled { background:rgba(44,36,22,0.08); color:var(--text-dim); cursor:not-allowed; }
+
+        /* 統計 */
+        .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+        .stat { background:rgba(44,36,22,0.05); border:1px solid var(--border); border-radius:12px; padding:12px 8px; text-align:center; }
+        .stat-val { font-size:17px; font-weight:700; font-family:'Space Mono',monospace; color:var(--text); margin-bottom:3px; }
+        .stat-label { font-size:11px; color:var(--text-dim); }
+
+        /* 遮蔭條 */
+        .shade-bar { margin-bottom:4px; }
+        .shade-track { height:8px; border-radius:4px; background:linear-gradient(to right,#8b1a1a,#e05c2a,#f0c040,#4ab8c0,#2d7dd2,#1a3a6b); position:relative; }
+        .shade-thumb { position:absolute; top:50%; width:18px; height:18px; border-radius:50%; background:white; border:3px solid var(--text); transform:translate(-50%,-50%); box-shadow:0 2px 8px rgba(0,0,0,0.2); transition:left 0.8s cubic-bezier(0.34,1.56,0.64,1); }
+        .shade-labels { display:flex; justify-content:space-between; font-size:10px; color:var(--text-dim); margin-top:4px; }
+
+        /* ── 導航介面 ── */
+        .nav-overlay {
+            position:fixed; inset:0; z-index:300;
+            display:flex; flex-direction:column;
+            pointer-events:none;
+        }
+        .nav-overlay.hidden { display:none; }
+
+        .nav-top {
+            margin:calc(16px + env(safe-area-inset-top,0px)) 16px 0;
+            background:var(--card); backdrop-filter:blur(20px);
+            border-radius:20px; padding:16px 20px;
+            border:1px solid var(--border);
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            pointer-events:all;
+        }
+        .nav-direction { display:flex; align-items:center; gap:12px; }
+        .nav-arrow { font-size:36px; }
+        .nav-instruction { flex:1; }
+        .nav-action { font-size:18px; font-weight:700; color:var(--text); }
+        .nav-street { font-size:13px; color:var(--text-dim); margin-top:2px; }
+        .nav-distance-badge { font-size:20px; font-weight:700; font-family:'Space Mono',monospace; color:var(--accent); }
+
+        .nav-bottom {
+            margin:auto 16px calc(24px + var(--safe));
+            background:var(--card); backdrop-filter:blur(20px);
+            border-radius:20px; padding:16px 20px;
+            border:1px solid var(--border);
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            pointer-events:all;
+            display:flex; justify-content:space-between; align-items:center;
+        }
+        .nav-remaining { }
+        .nav-remaining-dist { font-size:22px; font-weight:700; font-family:'Space Mono',monospace; color:var(--text); }
+        .nav-remaining-time { font-size:12px; color:var(--text-dim); }
+        .nav-shade-info { text-align:right; }
+        .nav-shade-val { font-size:22px; font-weight:700; font-family:'Space Mono',monospace; color:var(--accent); }
+        .nav-shade-label { font-size:12px; color:var(--text-dim); }
+        .nav-end-btn { background:var(--red); color:white; border:none; border-radius:12px; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; pointer-events:all; }
+
+        /* Loading */
+        .loading { position:fixed; inset:0; z-index:500; background:rgba(245,240,232,0.7); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; }
+        .loading.hidden { display:none; }
+        .spinner { width:40px; height:40px; border:3px solid rgba(44,36,22,0.1); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .loading-text { margin-top:12px; font-size:13px; color:var(--text-dim); }
+        .loading-wrap { display:flex; flex-direction:column; align-items:center; }
+
+        /* GPS 按鈕 */
+        .gps-btn {
+            position:fixed; right:12px; bottom:280px; z-index:150;
+            width:44px; height:44px; border-radius:50%;
+            background:var(--card); border:1px solid var(--border);
+            backdrop-filter:blur(20px); cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            font-size:20px; box-shadow:0 4px 16px rgba(0,0,0,0.12);
+            transition:all 0.2s;
+        }
+        .gps-btn:active { transform:scale(0.92); }
+    </style>
 </head>
 <body>
 
-    <!-- 全螢幕地圖 -->
-    <div id="map"></div>
+<div id="map"></div>
 
-    <!-- 頂部標題列 -->
-    <div class="top-bar">
-        <div class="top-bar-inner">
-            <div class="app-title">
-                <span class="title-icon">☀️</span>
-                <span class="title-text">陰影導航</span>
-            </div>
-            <button class="gps-btn" id="gpsBtn" title="定位我的位置">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
-                    <circle cx="12" cy="12" r="9" stroke-dasharray="2 4"/>
-                </svg>
-            </button>
+<!-- 頂部 -->
+<div class="top-bar">
+    <div class="app-brand">
+        <span class="icon">☀️</span>
+        <span class="name">陰影導航</span>
+    </div>
+    <div class="time-badge">
+        <div class="current-time" id="currentTime">--:--</div>
+        <div class="shade-time" id="shadeTime">遮蔭時段 --:00</div>
+    </div>
+</div>
+
+<!-- 提示 -->
+<div class="hint" id="hint">點擊地圖設定起點 📍</div>
+
+<!-- 色階 -->
+<div class="legend">
+    <div class="legend-label">涼</div>
+    <div class="legend-gradient"></div>
+    <div class="legend-label">熱</div>
+</div>
+
+<!-- GPS 按鈕 -->
+<button class="gps-btn" id="gpsBtn">📍</button>
+
+<!-- 底部抽屜 -->
+<div class="drawer" id="drawer">
+    <div class="drawer-handle"></div>
+
+    <div class="search-box">
+        <div class="search-row">
+            <div class="dot start"></div>
+            <input class="search-input" id="startInput" placeholder="起點（點地圖或輸入地址）" autocomplete="off">
+            <button class="clear-btn" id="clearStart">✕</button>
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-row">
+            <div class="dot end"></div>
+            <input class="search-input" id="endInput" placeholder="終點（點地圖或輸入地址）" autocomplete="off">
+            <button class="clear-btn" id="clearEnd">✕</button>
         </div>
     </div>
 
-    <!-- 浮動提示 -->
-    <div class="hint-bar" id="hintBar">
-        點擊地圖設定起點 📍
+    <div class="district-scroll">
+        <button class="chip" data-lat="25.0329" data-lng="121.5196">中正</button>
+        <button class="chip" data-lat="25.0632" data-lng="121.5130">大同</button>
+        <button class="chip" data-lat="25.0631" data-lng="121.5302">中山</button>
+        <button class="chip" data-lat="25.0498" data-lng="121.5775">松山</button>
+        <button class="chip" data-lat="25.0268" data-lng="121.5425">大安</button>
+        <button class="chip" data-lat="25.0351" data-lng="121.4994">萬華</button>
+        <button class="chip" data-lat="25.0338" data-lng="121.5645">信義</button>
+        <button class="chip" data-lat="25.0934" data-lng="121.5263">士林</button>
+        <button class="chip" data-lat="25.1324" data-lng="121.4988">北投</button>
+        <button class="chip" data-lat="25.0657" data-lng="121.5983">內湖</button>
+        <button class="chip" data-lat="25.0553" data-lng="121.6069">南港</button>
+        <button class="chip" data-lat="24.9994" data-lng="121.5694">文山</button>
     </div>
 
-    <!-- 色階說明 -->
-    <div class="legend">
-        <div class="legend-label">涼爽</div>
-        <div class="legend-gradient"></div>
-        <div class="legend-label">炎熱</div>
-    </div>
+    <button class="route-btn" id="routeBtn" disabled>
+        <span id="routeBtnText">請設定起點和終點</span>
+    </button>
 
-    <!-- 底部抽屜 -->
-    <div class="drawer" id="drawer">
-        <div class="drawer-handle" id="drawerHandle"></div>
-
-        <!-- 搜尋區 -->
-        <div class="search-section">
-            <div class="search-row">
-                <div class="search-dot start-dot"></div>
-                <input type="text" class="search-input" id="startInput" 
-                       placeholder="起點（點地圖或輸入地址）" autocomplete="off">
-                <button class="clear-btn" id="clearStart">✕</button>
-            </div>
-            <div class="search-divider"></div>
-            <div class="search-row">
-                <div class="search-dot end-dot"></div>
-                <input type="text" class="search-input" id="endInput" 
-                       placeholder="終點（點地圖或輸入地址）" autocomplete="off">
-                <button class="clear-btn" id="clearEnd">✕</button>
-            </div>
+    <div id="resultSection" style="display:none">
+        <div class="stats">
+            <div class="stat"><div class="stat-val" id="statDist">—</div><div class="stat-label">距離</div></div>
+            <div class="stat"><div class="stat-val" id="statShade">—</div><div class="stat-label">遮蔭率</div></div>
+            <div class="stat"><div class="stat-val" id="statTime">—</div><div class="stat-label">預估時間</div></div>
         </div>
-
-        <!-- 行政區快選 -->
-        <div class="district-section">
-            <div class="district-scroll">
-                <button class="district-chip" data-lat="25.0329" data-lng="121.5196">中正</button>
-                <button class="district-chip" data-lat="25.0632" data-lng="121.5130">大同</button>
-                <button class="district-chip" data-lat="25.0631" data-lng="121.5302">中山</button>
-                <button class="district-chip" data-lat="25.0498" data-lng="121.5775">松山</button>
-                <button class="district-chip" data-lat="25.0268" data-lng="121.5425">大安</button>
-                <button class="district-chip" data-lat="25.0351" data-lng="121.4994">萬華</button>
-                <button class="district-chip" data-lat="25.0338" data-lng="121.5645">信義</button>
-                <button class="district-chip" data-lat="25.0934" data-lng="121.5263">士林</button>
-                <button class="district-chip" data-lat="25.1324" data-lng="121.4988">北投</button>
-                <button class="district-chip" data-lat="25.0657" data-lng="121.5983">內湖</button>
-                <button class="district-chip" data-lat="25.0553" data-lng="121.6069">南港</button>
-                <button class="district-chip" data-lat="24.9994" data-lng="121.5694">文山</button>
-            </div>
+        <div class="shade-bar">
+            <div class="shade-track"><div class="shade-thumb" id="shadeThumb" style="left:50%"></div></div>
+            <div class="shade-labels"><span>炎熱</span><span>涼爽</span></div>
         </div>
-
-        <!-- 計算按鈕 -->
-        <button class="route-btn" id="routeBtn" disabled>
-            <span id="routeBtnText">請設定起點和終點</span>
+        <button class="route-btn" id="startNavBtn" style="margin-top:12px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;box-shadow:0 4px 20px rgba(34,197,94,0.3)">
+            🧭 開始導航
         </button>
+    </div>
+</div>
 
-        <!-- 路徑結果 -->
-        <div class="result-section" id="resultSection" style="display:none">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="statDistance">—</div>
-                    <div class="stat-label">距離</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statShade">—</div>
-                    <div class="stat-label">遮蔭率</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statTime">—</div>
-                    <div class="stat-label">預估時間</div>
-                </div>
+<!-- 導航介面 -->
+<div class="nav-overlay hidden" id="navOverlay">
+    <div class="nav-top">
+        <div class="nav-direction">
+            <div class="nav-arrow" id="navArrow">⬆️</div>
+            <div class="nav-instruction">
+                <div class="nav-action" id="navAction">沿路直行</div>
+                <div class="nav-street" id="navStreet">繼續前進</div>
             </div>
-
-            <!-- 遮蔭溫度計 -->
-            <div class="shade-meter">
-                <div class="shade-meter-bar">
-                    <div class="shade-meter-fill" id="shadeMeterFill"></div>
-                    <div class="shade-meter-thumb" id="shadeMeterThumb"></div>
-                </div>
-                <div class="shade-meter-labels">
-                    <span>炎熱</span>
-                    <span>涼爽</span>
-                </div>
-            </div>
+            <div class="nav-distance-badge" id="navNextDist">—</div>
         </div>
     </div>
-
-    <!-- Loading 遮罩 -->
-    <div class="loading-overlay" id="loadingOverlay" style="display:none">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">計算最涼爽路線中...</div>
+    <div class="nav-bottom">
+        <div class="nav-remaining">
+            <div class="nav-remaining-dist" id="navRemDist">—</div>
+            <div class="nav-remaining-time" id="navRemTime">剩餘時間</div>
         </div>
+        <div class="nav-shade-info">
+            <div class="nav-shade-val" id="navShade">—</div>
+            <div class="nav-shade-label">遮蔭率</div>
+        </div>
+        <button class="nav-end-btn" id="endNavBtn">結束</button>
     </div>
+</div>
 
-    <script src="app.js"></script>
+<!-- Loading -->
+<div class="loading hidden" id="loading">
+    <div class="loading-wrap">
+        <div class="spinner"></div>
+        <div class="loading-text">計算最涼爽路線...</div>
+    </div>
+</div>
+
+<script>
+const API_URL = 'http://localhost:5000';
+
+// ── 地圖 ──
+const map = L.map('map', { zoomControl:false }).setView([25.0478, 121.5319], 14);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution:'© OpenStreetMap © CartoDB', maxZoom:19
+}).addTo(map);
+
+// ── 狀態 ──
+let state = { mode:'start', start:null, end:null, startMarker:null, endMarker:null, routeLayers:[], navPath:[], navIndex:0, navInterval:null, userMarker:null };
+
+// ── 時間顯示 ──
+function getShadeHour() {
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes();
+    if (m >= 30) h++;
+    return Math.max(9, Math.min(17, h));
+}
+
+function updateTime() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('currentTime').textContent = `${h}:${m}`;
+    const shade = getShadeHour();
+    document.getElementById('shadeTime').textContent = `遮蔭時段 ${shade}:00`;
+}
+updateTime();
+setInterval(updateTime, 30000);
+
+// ── 色階 ──
+function shadeColor(score) {
+    const stops = [
+        {t:0.0, r:139,g:26,b:26},
+        {t:0.2, r:224,g:92,b:42},
+        {t:0.4, r:240,g:192,b:64},
+        {t:0.6, r:74,g:184,b:192},
+        {t:0.8, r:45,g:125,b:210},
+        {t:1.0, r:26,g:58,b:107},
+    ];
+    const s = Math.max(0, Math.min(1, score));
+    for (let i=0; i<stops.length-1; i++) {
+        if (s >= stops[i].t && s <= stops[i+1].t) {
+            const r = (s-stops[i].t)/(stops[i+1].t-stops[i].t);
+            return `rgb(${Math.round(stops[i].r+r*(stops[i+1].r-stops[i].r))},${Math.round(stops[i].g+r*(stops[i+1].g-stops[i].g))},${Math.round(stops[i].b+r*(stops[i+1].b-stops[i].b))})`;
+        }
+    }
+    return 'rgb(26,58,107)';
+}
+
+// ── Marker ──
+function createMarker(lat, lng, type) {
+    const color = type==='start'?'#22c55e':'#ef4444';
+    return L.marker([lat,lng], { icon: L.divIcon({
+        className:'', iconSize:[32,32], iconAnchor:[16,32],
+        html:`<div style="width:32px;height:32px;background:${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.3)"><div style="width:10px;height:10px;background:white;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"></div></div>`
+    })});
+}
+
+// ── 地圖點擊 ──
+map.on('click', async (e) => {
+    const {lat, lng} = e.latlng;
+    if (state.mode==='start') setStart(lat, lng);
+    else if (state.mode==='end') setEnd(lat, lng);
+});
+
+async function setStart(lat, lng) {
+    state.start = {lat, lng};
+    state.mode = 'end';
+    if (state.startMarker) map.removeLayer(state.startMarker);
+    state.startMarker = createMarker(lat, lng, 'start').addTo(map);
+    document.getElementById('startInput').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    setHint('點擊地圖設定終點 🏁');
+    updateBtn();
+    const addr = await reverseGeocode(lat, lng);
+    if (addr) document.getElementById('startInput').value = addr;
+}
+
+async function setEnd(lat, lng) {
+    state.end = {lat, lng};
+    state.mode = 'done';
+    if (state.endMarker) map.removeLayer(state.endMarker);
+    state.endMarker = createMarker(lat, lng, 'end').addTo(map);
+    document.getElementById('endInput').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    setHint('點「計算最涼爽路線」🌿');
+    updateBtn();
+    const addr = await reverseGeocode(lat, lng);
+    if (addr) document.getElementById('endInput').value = addr;
+}
+
+async function reverseGeocode(lat, lng) {
+    try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {headers:{'User-Agent':'ShadowNav/1.0'}});
+        const d = await r.json();
+        return d.display_name?.split(',').slice(0,2).join(',') || null;
+    } catch { return null; }
+}
+
+// ── 計算路徑 ──
+async function calcRoute() {
+    if (!state.start || !state.end) return;
+    document.getElementById('loading').classList.remove('hidden');
+    clearRoute();
+
+    try {
+        const hour = getShadeHour();
+        const res = await fetch(`${API_URL}/api/route`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+                start: state.start,
+                end: state.end,
+                hour: hour
+            })
+        });
+        const data = await res.json();
+        if (data.status !== 'success') { alert('找不到路徑！'); return; }
+        drawRoute(data.route);
+        showStats(data.route.statistics);
+        state.navPath = data.route.path;
+    } catch (e) {
+        alert('無法連線到後端，請確認 app.py 正在執行。');
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
+    }
+}
+
+// ── 繪製路徑 ──
+function drawRoute(route) {
+    clearRoute();
+    const path = route.path;
+    const scores = route.segment_scores || [];
+    if (!path || path.length < 2) return;
+
+    for (let i=0; i<path.length-1; i++) {
+        const score = scores[i] !== undefined ? scores[i] : (route.statistics.shade_score || 0);
+        const color = shadeColor(score);
+        const outline = L.polyline([[path[i][0],path[i][1]],[path[i+1][0],path[i+1][1]]], {color:'rgba(0,0,0,0.2)', weight:9, lineCap:'round'}).addTo(map);
+        const seg = L.polyline([[path[i][0],path[i][1]],[path[i+1][0],path[i+1][1]]], {color, weight:6, opacity:0.95, lineCap:'round'}).addTo(map);
+        state.routeLayers.push(outline, seg);
+    }
+
+    map.fitBounds(L.latLngBounds(path.map(p=>[p[0],p[1]])), {padding:[80,80]});
+}
+
+function clearRoute() {
+    state.routeLayers.forEach(l => map.removeLayer(l));
+    state.routeLayers = [];
+}
+
+// ── 統計 ──
+function showStats(stats) {
+    document.getElementById('resultSection').style.display = 'block';
+    const dist = stats.distance;
+    document.getElementById('statDist').textContent = dist>=1000 ? `${(dist/1000).toFixed(1)}km` : `${Math.round(dist)}m`;
+    document.getElementById('statShade').textContent = `${Math.round(stats.shade_score*100)}%`;
+    document.getElementById('statTime').textContent = `${stats.estimated_time}分`;
+    document.getElementById('shadeThumb').style.left = `${stats.shade_score*100}%`;
+    setHint('');
+}
+
+// ── 導航模式 ──
+function startNav() {
+    if (!state.navPath || state.navPath.length < 2) return;
+    state.navIndex = 0;
+    document.getElementById('navOverlay').classList.remove('hidden');
+    document.getElementById('drawer').classList.add('hidden');
+
+    // 開始 GPS 追蹤
+    if (navigator.geolocation) {
+        state.navInterval = navigator.geolocation.watchPosition(
+            pos => updateNav(pos.coords.latitude, pos.coords.longitude),
+            err => console.log(err),
+            {enableHighAccuracy: true, maximumAge: 3000}
+        );
+    }
+
+    updateNavDisplay();
+}
+
+function updateNav(lat, lng) {
+    // 更新使用者位置
+    if (state.userMarker) map.removeLayer(state.userMarker);
+    state.userMarker = L.circleMarker([lat, lng], {
+        radius:10, fillColor:'#2d7dd2', fillOpacity:1,
+        color:'white', weight:3
+    }).addTo(map);
+
+    map.setView([lat, lng], 17);
+
+    // 找最近的路徑點
+    let minDist = Infinity, nearest = state.navIndex;
+    for (let i=state.navIndex; i<state.navPath.length; i++) {
+        const d = Math.hypot(lat-state.navPath[i][0], lng-state.navPath[i][1]);
+        if (d < minDist) { minDist=d; nearest=i; }
+    }
+    if (nearest > state.navIndex) { state.navIndex = nearest; }
+
+    updateNavDisplay();
+
+    // 到達終點
+    if (state.navIndex >= state.navPath.length-1) {
+        endNav();
+        alert('🎉 已到達目的地！');
+    }
+}
+
+function updateNavDisplay() {
+    const path = state.navPath;
+    const idx = state.navIndex;
+    if (!path || idx >= path.length-1) return;
+
+    // 下一個點的方向
+    const curr = path[idx];
+    const next = path[Math.min(idx+1, path.length-1)];
+    const bearing = getBearing(curr[0], curr[1], next[0], next[1]);
+    document.getElementById('navArrow').textContent = bearingToArrow(bearing);
+    document.getElementById('navAction').textContent = bearingToText(bearing);
+
+    // 到下一個點的距離
+    const nextDist = getDistance(curr[0], curr[1], next[0], next[1]);
+    document.getElementById('navNextDist').textContent = nextDist < 100 ? `${Math.round(nextDist)}m` : `${(nextDist/1000).toFixed(1)}km`;
+
+    // 剩餘距離
+    let remDist = 0;
+    for (let i=idx; i<path.length-1; i++) {
+        remDist += getDistance(path[i][0], path[i][1], path[i+1][0], path[i+1][1]);
+    }
+    document.getElementById('navRemDist').textContent = remDist < 1000 ? `${Math.round(remDist)}m` : `${(remDist/1000).toFixed(1)}km`;
+    document.getElementById('navRemTime').textContent = `約 ${Math.ceil(remDist/80)} 分鐘`;
+}
+
+function endNav() {
+    document.getElementById('navOverlay').classList.add('hidden');
+    document.getElementById('drawer').classList.remove('hidden');
+    if (state.navInterval) { navigator.geolocation.clearWatch(state.navInterval); state.navInterval=null; }
+    if (state.userMarker) { map.removeLayer(state.userMarker); state.userMarker=null; }
+}
+
+// ── 工具函數 ──
+function getDistance(lat1, lng1, lat2, lng2) {
+    const R=6371000, dLat=Math.radians(lat2-lat1), dLng=Math.radians(lng2-lng1);
+    const a = Math.sin(dLat/2)**2 + Math.cos(Math.radians(lat1))*Math.cos(Math.radians(lat2))*Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+Math.radians = deg => deg * Math.PI / 180;
+
+function getBearing(lat1, lng1, lat2, lng2) {
+    const dLng = Math.radians(lng2-lng1);
+    const y = Math.sin(dLng)*Math.cos(Math.radians(lat2));
+    const x = Math.cos(Math.radians(lat1))*Math.sin(Math.radians(lat2)) - Math.sin(Math.radians(lat1))*Math.cos(Math.radians(lat2))*Math.cos(dLng);
+    return (Math.atan2(y,x)*180/Math.PI+360)%360;
+}
+
+function bearingToArrow(b) {
+    if (b<22.5||b>=337.5) return '⬆️';
+    if (b<67.5) return '↗️';
+    if (b<112.5) return '➡️';
+    if (b<157.5) return '↘️';
+    if (b<202.5) return '⬇️';
+    if (b<247.5) return '↙️';
+    if (b<292.5) return '⬅️';
+    return '↖️';
+}
+
+function bearingToText(b) {
+    if (b<22.5||b>=337.5) return '直行';
+    if (b<67.5) return '右前方';
+    if (b<112.5) return '右轉';
+    if (b<157.5) return '右後方';
+    if (b<202.5) return '回頭';
+    if (b<247.5) return '左後方';
+    if (b<292.5) return '左轉';
+    return '左前方';
+}
+
+// ── 事件綁定 ──
+document.getElementById('routeBtn').addEventListener('click', calcRoute);
+document.getElementById('startNavBtn').addEventListener('click', startNav);
+document.getElementById('endNavBtn').addEventListener('click', endNav);
+
+document.getElementById('gpsBtn').addEventListener('click', () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(pos => {
+        map.setView([pos.coords.latitude, pos.coords.longitude], 16);
+        setStart(pos.coords.latitude, pos.coords.longitude);
+    });
+});
+
+document.getElementById('clearStart').addEventListener('click', () => {
+    state.start=null; document.getElementById('startInput').value='';
+    if (state.startMarker) { map.removeLayer(state.startMarker); state.startMarker=null; }
+    state.mode='start'; clearRoute(); document.getElementById('resultSection').style.display='none';
+    setHint('點擊地圖設定起點 📍'); updateBtn();
+});
+
+document.getElementById('clearEnd').addEventListener('click', () => {
+    state.end=null; document.getElementById('endInput').value='';
+    if (state.endMarker) { map.removeLayer(state.endMarker); state.endMarker=null; }
+    if (state.start) state.mode='end'; clearRoute(); document.getElementById('resultSection').style.display='none';
+    setHint('點擊地圖設定終點 🏁'); updateBtn();
+});
+
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    map.setView([parseFloat(c.dataset.lat), parseFloat(c.dataset.lng)], 15);
+}));
+
+function setHint(text) {
+    const el = document.getElementById('hint');
+    if (!text) { el.classList.add('hidden'); return; }
+    el.textContent = text; el.classList.remove('hidden');
+}
+
+function updateBtn() {
+    const btn = document.getElementById('routeBtn');
+    const txt = document.getElementById('routeBtnText');
+    if (state.start && state.end) { btn.disabled=false; txt.textContent='🌿 計算最涼爽路線'; }
+    else if (state.start) { btn.disabled=true; txt.textContent='請設定終點'; }
+    else { btn.disabled=true; txt.textContent='請設定起點和終點'; }
+}
+
+// 顯示遮蔭統計
+document.getElementById('statShade') && fetch(`${API_URL}/api/stats`).then(r=>r.json()).then(d=>{
+    if (d.status==='success') console.log('資料庫連線成功', d.data);
+});
+</script>
 </body>
 </html>
