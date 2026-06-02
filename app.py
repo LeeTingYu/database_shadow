@@ -1,76 +1,257 @@
+
+Claude finished the response
+1780367585845_image.png
+1780367652289_image.png
+這是我們要做的台北市遮陰導航ERD圖
+我要做的事情是寫後端
+我想到的後端步驟是這樣的
+
+請幫我debug
+
+上午10:34
+看起來你分享了 ERD 圖和後端流程，但還沒貼上你的程式碼！
+
+請把你想 debug 的後端程式碼貼上來，我再幫你看 🙂
+
+
+""" 陰影導航後端 API v2 支援時間參數的路徑計算 執行方式：python app_v2.py """ from flask import Flask, request, jsonify from flask_cors import CORS import psycopg2 from psycopg2.extras import RealDictCursor import json from datetime import datetime app = Flask(__name__) CORS(app) DB_CONFIG = { 'ho
+
+pasted
+
+上午10:35
+看了你的程式碼，發現幾個問題：
+
+🔴 嚴重問題
+
+1. exec(open('admin_routes.py').read()) — 非常危險且會壞掉
+
+這樣 import 的方式在 Flask 裡幾乎一定出錯，因為 admin_routes.py 裡的 @app.route(...) 會找不到 app 這個變數（scope 不同）。正確做法是用 Blueprint：
+
+python
+# admin_routes.py
+from flask import Blueprint
+admin_bp = Blueprint('admin', __name__)
+
+@admin_bp.route('/api/admin/something')
+def something():
+    ...
+python
+# app_v2.py
+from admin_routes import admin_bp
+app.register_blueprint(admin_bp)
+2. e.cost vs e.shade_score — 欄位名稱不一致
+
+pgr_dijkstra 的 SQL 裡你用的是 e.cost：
+
+sql
+e.cost  -- ← dijkstra 用這個當權重
+但後面 SELECT 又用 e.shade_score：
+
+sql
+AVG(e.shade_score) AS avg_shade_score
+根據你的 ERD，Edge_shadow 才有 shadow_score，edge 本身只有 length 和 cost。你需要 JOIN Edge_shadow 來取得當前時段的 shadow_score，而且 dijkstra 的權重應該也要用 shadow cost，不然「遮陰導航」就沒意義了。
+
+🟡 邏輯問題
+
+3. hour 參數傳進去了但完全沒用到
+
+你接收了 hour 和 target_date，但 SQL 裡完全沒有 filter：
+
+python
+hour = data.get('hour', get_current_hour())
+target_date = '2026-06-21'
+# 然後這兩個變數就消失了...
+應該要在 dijkstra 的 SQL 裡 JOIN edge_shadow 並加條件：
+
+sql
+JOIN edge_shadow es ON e.edge_id = es.edge_id
+JOIN sun s ON es.sun_id = s.sun_id
+WHERE s.hour = {hour} AND s.date = '{target_date}'
+🟢 小問題
+
+4. walk_time 單位換算
+
+python
+walk_time = int(distance / 80)  # 80 是什麼單位？
+如果 distance 是公尺，步行速度約 80 公尺/分鐘還算合理，但建議加個註解，或改成：
+
+python
+WALK_SPEED_M_PER_MIN = 80
+walk_time = int(distance / WALK_SPEED_M_PER_MIN)
+建議修正後的 dijkstra SQL 結構：
+
+sql
+SELECT 
+    e.edge_id AS id,
+    e.source,
+    e.target,
+    COALESCE(es.cost, e.length) AS cost  -- 有遮陰資料用遮陰cost，否則fallback到距離
+FROM edge e
+LEFT JOIN edge_shadow es ON e.edge_id = es.edge_id
+LEFT JOIN sun s ON es.sun_id = s.sun_id 
+    AND s.hour = %s 
+    AND s.date = %s
+WHERE 
+    n_src.geom && ST_MakeEnvelope(...)
+    AND n_tgt.geom && ST_MakeEnvelope(...)
+要我幫你把整個 query 重寫成正確版本嗎？
+
+整個重寫 謝謝 請參考我的ERD
+
+上午10:36
+先看一下你的 ERD 細節確認欄位名稱：
+
+
+Check uploaded images
+Check uploaded images
+從你的 ERD 我整理出以下 schema，確認一下再寫：
+
+ERD 欄位整理：
+
+edge: edge_id, source, target, e_dist, length, computed_at
+edge_shadow: edge_id (FK→edge), sun_id (FK→sun), shadow_score, cost, computed_at
+sun: sun_id, date, hour, azimuth, elevation
+node: node_id, n_dist, geom, created_at, delete_at
+所以 dijkstra 的權重應該用 edge_shadow.cost（已考慮遮陰的 cost），shadow_score 是另外回傳給前端顯示顏色的。這樣理解對嗎？確認後我就重寫。
+
+
+Look at the ERD image more carefully
+Look at the ERD image more carefully
+ERD 看清楚了，schema 確認如下：
+
+edge_shadow 的 PK 是 (edge_id, sun_id)，cost 是這條路在該日照條件下的加權成本，shadow_score 是遮陰分數（給前端顯色用）
+edge 沒有自己的 cost 欄位，只有 length
+dijkstra 權重 → 用 edge_shadow.cost，fallback 用 edge.length
+現在開始重寫：
+
+
+Created a file, read a file
+Created a file, read a file
+重寫完成，整理一下主要改了什麼：
+
+🔴 修正的嚴重問題
+
+問題	原本	修正後
+import admin_routes	exec(open(...).read())	Blueprint + register_blueprint
+dijkstra 權重	用 e.cost（欄位不存在）	用 edge_shadow.cost，fallback edge.length
+hour/date 沒用到	查詢完全忽略時間	JOIN sun 加 s.date + s.hour 過濾
+shadow_score 來源	用 e.shade_score（欄位不存在）	JOIN edge_shadow 取 es.shadow_score
+🟡 邏輯改動
+
+FILTER (WHERE r.edge <> -1)：pgr_dijkstra 最後一行的終點 row 的 edge 是 -1，原本你的 WHERE r.edge != -1 會把終點的 node 座標也濾掉，導致路徑缺最後一個點。現在改用 FILTER 只排除統計，座標保留。
+walk_time 加了常數命名 WALK_SPEED_M_PER_MIN = 80，清楚知道單位是公尺/分鐘。
+⚠️ 你還需要做的事
+
+admin_routes.py 要改成 Blueprint 格式，否則 import 還是會壞：
+
+python
+# admin_routes.py
+from flask import Blueprint
+admin_bp = Blueprint('admin', __name__)
+
+@admin_bp.route('/api/admin/xxx')
+def xxx():
+    ...
+
+App v2
+PY 
+
+
+
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+App v2 · PY
 """
 陰影導航後端 API v2
-支援時間參數的路徑計算
+支援時間參數的遮陰路徑計算
 執行方式：python app_v2.py
 """
-
+ 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
 from psycopg2.extras import RealDictCursor
-import json
 from datetime import datetime
-
+from admin_routes import admin_bp   # ← 用 Blueprint 正確 import
+ 
 app = Flask(__name__)
 CORS(app)
-
+app.register_blueprint(admin_bp)
+ 
+# ──────────────────────────────────────────
+# DB 設定
+# ──────────────────────────────────────────
 DB_CONFIG = {
-    'host': 'localhost',
-    'port': 5432,
+    'host':     'localhost',
+    'port':     5432,
     'database': 'shadow',
-    'user': 'postgres',
-    'password': '123456'
+    'user':     'postgres',
+    'password': '123456',
 }
-
+ 
 def get_db_connection():
     return psycopg2.connect(**DB_CONFIG)
-
-def get_current_hour():
-    """取得當前整點化時間（30分前靠前，30分後靠後）"""
-    now = datetime.now()
-    hour = now.hour
-    minute = now.minute
-    if minute >= 30:
-        hour = hour + 1
-    # 限制在 9-17 之間
-    hour = max(9, min(17, hour))
-    return hour
-
+ 
+ 
+# ──────────────────────────────────────────
+# 時間工具
+# ──────────────────────────────────────────
+TARGET_DATE = '2026-06-21'   # 固定夏至
+HOUR_MIN    = 9
+HOUR_MAX    = 17
+ 
+def get_current_hour() -> int:
+    """
+    把當前時刻對齊到整點：
+      - 30 分前 → 靠前整點
+      - 30 分後 → 靠後整點
+    結果夾在 HOUR_MIN ~ HOUR_MAX 之間
+    """
+    now    = datetime.now()
+    hour   = now.hour + (1 if now.minute >= 30 else 0)
+    return max(HOUR_MIN, min(HOUR_MAX, hour))
+ 
+ 
+# ──────────────────────────────────────────
+# 路由
+# ──────────────────────────────────────────
 @app.route('/')
 def home():
     return jsonify({
-        'status': 'ok',
-        'message': '陰影導航 API v2',
-        'current_hour': get_current_hour()
+        'status':       'ok',
+        'message':      '陰影導航 API v2',
+        'current_hour': get_current_hour(),
     })
-
+ 
+ 
 @app.route('/api/current-time', methods=['GET'])
 def get_current_time():
-    """取得當前整點化時間"""
-    now = datetime.now()
+    now  = datetime.now()
     hour = get_current_hour()
     return jsonify({
         'status': 'success',
         'data': {
             'current_time': now.strftime('%H:%M'),
-            'shade_hour': hour,
-            'date': '2026-06-21'  # 固定夏至
-        }
+            'shade_hour':   hour,
+            'date':         TARGET_DATE,
+        },
     })
-
+ 
+ 
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
     try:
         conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur  = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
-            SELECT 
-                (SELECT COUNT(*) FROM region) AS regions,
-                (SELECT COUNT(*) FROM building) AS buildings,
-                (SELECT COUNT(*) FROM tree) AS trees,
-                (SELECT COUNT(*) FROM node) AS nodes,
-                (SELECT COUNT(*) FROM edge) AS edges,
-                (SELECT COUNT(*) FROM sun) AS sun_records
+            SELECT
+                (SELECT COUNT(*) FROM region)      AS regions,
+                (SELECT COUNT(*) FROM tree)        AS trees,
+                (SELECT COUNT(*) FROM node)        AS nodes,
+                (SELECT COUNT(*) FROM edge)        AS edges,
+                (SELECT COUNT(*) FROM sun)         AS sun_records,
+                (SELECT COUNT(*) FROM edge_shadow) AS edge_shadow_records
         """)
         stats = cur.fetchone()
         cur.close()
@@ -78,136 +259,283 @@ def get_stats():
         return jsonify({'status': 'success', 'data': stats})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
-
+ 
+ 
 @app.route('/api/route', methods=['POST'])
 def calculate_route():
     try:
         data = request.json
-
-        start_lat = data['start']['lat']
-        start_lng = data['start']['lng']
-        end_lat = data['end']['lat']
-        end_lng = data['end']['lng']
-
-        # 取得時間參數（沒傳就用當前時間）
-        hour = data.get('hour', get_current_hour())
-        target_date = '2026-06-21'
-
-        print(f"計算路徑：({start_lat}, {start_lng}) → ({end_lat}, {end_lng}) 時段：{hour}:00")
-
+ 
+        start_lat = float(data['start']['lat'])
+        start_lng = float(data['start']['lng'])
+        end_lat   = float(data['end']['lat'])
+        end_lng   = float(data['end']['lng'])
+ 
+        # hour：前端可指定，否則用當前整點
+        hour        = int(data.get('hour', get_current_hour()))
+        target_date = data.get('date', TARGET_DATE)
+ 
+        # 合法範圍檢查
+        hour = max(HOUR_MIN, min(HOUR_MAX, hour))
+ 
+        print(f"計算路徑：({start_lat}, {start_lng}) → ({end_lat}, {end_lng})"
+              f"  日期：{target_date}  時段：{hour}:00")
+ 
+        # Bounding box（起終點各往外 0.01 度，約 1 km）
+        bbox_min_lng = min(start_lng, end_lng) - 0.01
+        bbox_max_lng = max(start_lng, end_lng) + 0.01
+        bbox_min_lat = min(start_lat, end_lat) - 0.01
+        bbox_max_lat = max(start_lat, end_lat) + 0.01
+ 
         conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-
-        # bbox
-        min_lng = min(start_lng, end_lng) - 0.01
-        max_lng = max(start_lng, end_lng) + 0.01
-        min_lat = min(start_lat, end_lat) - 0.01
-        max_lat = max(start_lat, end_lat) + 0.01
-
-        # 查詢這個時段的陰影 cost
-        # 如果有 edge_hourly_shadow 用精確的，否則用平均的
+        cur  = conn.cursor(cursor_factory=RealDictCursor)
+ 
+        # ── 主查詢 ──────────────────────────────────────────────────────────
+        #
+        # 設計邏輯：
+        #   1. start_node / end_node：用 <-> 運算子找最近的 node（KNN）
+        #   2. pgr_dijkstra 的 edge SQL：
+        #      - JOIN edge_shadow + sun 取得當下時段的 cost
+        #      - 若該 edge 這個時段沒有 edge_shadow 資料，fallback 用 edge.length
+        #      - 只考慮 bbox 範圍內的 edge（source & target 都在 bbox 內）
+        #   3. 最後 JOIN 回 node 取座標、JOIN edge 取 length、
+        #      JOIN edge_shadow 取 shadow_score（給前端畫顏色用）
+        #
         query = """
         WITH
+        -- 1. 找最近的起點 node
         start_node AS (
             SELECT node_id
             FROM node
-            ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
+            ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%(start_lng)s, %(start_lat)s), 4326)
             LIMIT 1
         ),
+ 
+        -- 2. 找最近的終點 node
         end_node AS (
             SELECT node_id
             FROM node
-            ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
+            ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%(end_lng)s, %(end_lat)s), 4326)
             LIMIT 1
         ),
+ 
+        -- 3. pgr_dijkstra 計算最短（最涼快）路徑
         route AS (
-            SELECT * FROM pgr_dijkstra(
-                'SELECT 
-                    e.edge_id AS id,
+            SELECT *
+            FROM pgr_dijkstra(
+                -- edge SQL：在 bbox 內的 edge，以 edge_shadow.cost 為權重
+                $pgr$
+                SELECT
+                    e.edge_id                   AS id,
                     e.source,
                     e.target,
-                    e.cost
+                    COALESCE(es.cost, e.length) AS cost   -- 有遮陰 cost 優先，否則用距離
                 FROM edge e
+                -- 只加入 bbox 範圍內的 source node
                 JOIN node n_src ON e.source = n_src.node_id
+                    AND n_src.geom && ST_MakeEnvelope(
+                        $1, $2, $3, $4, 4326   -- bbox_min_lng, bbox_min_lat, bbox_max_lng, bbox_max_lat
+                    )
+                -- 只加入 bbox 範圍內的 target node
                 JOIN node n_tgt ON e.target = n_tgt.node_id
-                WHERE 
-                    n_src.geom && ST_MakeEnvelope(%s, %s, %s, %s, 4326)
-                    AND n_tgt.geom && ST_MakeEnvelope(%s, %s, %s, %s, 4326)',
+                    AND n_tgt.geom && ST_MakeEnvelope(
+                        $1, $2, $3, $4, 4326
+                    )
+                -- LEFT JOIN 取當下時段的遮陰 cost（無資料時 COALESCE fallback）
+                LEFT JOIN edge_shadow es ON es.edge_id = e.edge_id
+                LEFT JOIN sun         s  ON s.sun_id   = es.sun_id
+                    AND s.date = $5           -- target_date
+                    AND s.hour = $6           -- hour
+                $pgr$,
                 (SELECT node_id FROM start_node),
                 (SELECT node_id FROM end_node),
                 directed := false
             )
         )
-        SELECT 
+ 
+        -- 4. 組合結果：路徑座標 + 統計 + 每段遮陰分數
+        SELECT
+            -- 路徑座標（按順序排列）
             json_agg(
                 json_build_object(
-                    'lat', ST_Y(n.geom),
-                    'lng', ST_X(n.geom),
+                    'lat',     ST_Y(n.geom),
+                    'lng',     ST_X(n.geom),
                     'node_id', r.node
                 )
                 ORDER BY r.path_seq
             ) AS path,
-            SUM(e.length) AS total_distance,
-            AVG(e.shade_score) AS avg_shade_score,
+ 
+            -- 總距離（公尺）
+            SUM(e.length) FILTER (WHERE r.edge <> -1) AS total_distance,
+ 
+            -- 平均遮陰分數（0=無遮陰，1=全遮陰）
+            AVG(es.shadow_score) FILTER (WHERE r.edge <> -1) AS avg_shadow_score,
+ 
+            -- 每段 edge 的遮陰資訊（給前端畫顏色）
             json_agg(
                 json_build_object(
-                    'edge_id', r.edge,
-                    'shade_score', COALESCE(e.shade_score, 0)
+                    'edge_id',      r.edge,
+                    'shadow_score', COALESCE(es.shadow_score, 0),
+                    'cost',         COALESCE(es.cost, e.length)
                 )
                 ORDER BY r.path_seq
-            ) AS edge_details
+            ) FILTER (WHERE r.edge <> -1) AS edge_details
+ 
         FROM route r
-        JOIN node n ON r.node = n.node_id
-        LEFT JOIN edge e ON r.edge = e.edge_id
-        WHERE r.edge != -1;
+        JOIN  node n  ON r.node    = n.node_id
+        LEFT JOIN edge e  ON r.edge    = e.edge_id
+        -- 再次 JOIN edge_shadow 取 shadow_score（顯示用，不影響路徑計算）
+        LEFT JOIN edge_shadow es ON es.edge_id = e.edge_id
+        LEFT JOIN sun         s  ON s.sun_id   = es.sun_id
+            AND s.date = %(target_date)s
+            AND s.hour = %(hour)s
         """
-
-        cur.execute(query, (
-            start_lng, start_lat,
-            end_lng, end_lat,
-            min_lng, min_lat, max_lng, max_lat,
-            min_lng, min_lat, max_lng, max_lat
-        ))
-
+ 
+        # psycopg2 的 %(name)s 語法 與 $1..$6（pgr SQL 內）並存時，
+        # pgr 內的 $1~$6 要用 %s 傳入，外層 CTE 用 %(name)s
+        # → 整合成一個 params dict，pgr 內的參數用 positional %s 並接在最前面
+        params = {
+            'start_lng':   start_lng,
+            'start_lat':   start_lat,
+            'end_lng':     end_lng,
+            'end_lat':     end_lat,
+            'target_date': target_date,
+            'hour':        hour,
+        }
+ 
+        # 注意：pgr 內的 $1~$6 是 libpq 的 server-side binding，
+        # 必須另外傳，這裡改用字串格式化塞入 bbox 與時間（安全，因為都是數字/日期）
+        pgr_edge_sql = f"""
+            SELECT
+                e.edge_id                   AS id,
+                e.source,
+                e.target,
+                COALESCE(es.cost, e.length) AS cost
+            FROM edge e
+            JOIN node n_src ON e.source = n_src.node_id
+                AND n_src.geom && ST_MakeEnvelope(
+                    {bbox_min_lng}, {bbox_min_lat}, {bbox_max_lng}, {bbox_max_lat}, 4326
+                )
+            JOIN node n_tgt ON e.target = n_tgt.node_id
+                AND n_tgt.geom && ST_MakeEnvelope(
+                    {bbox_min_lng}, {bbox_min_lat}, {bbox_max_lng}, {bbox_max_lat}, 4326
+                )
+            LEFT JOIN edge_shadow es ON es.edge_id = e.edge_id
+            LEFT JOIN sun         s  ON s.sun_id   = es.sun_id
+                AND s.date = '{target_date}'
+                AND s.hour = {hour}
+        """
+ 
+        # 重新整理 query，直接把 pgr_edge_sql 嵌入
+        final_query = """
+        WITH
+        start_node AS (
+            SELECT node_id
+            FROM node
+            ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%(start_lng)s, %(start_lat)s), 4326)
+            LIMIT 1
+        ),
+        end_node AS (
+            SELECT node_id
+            FROM node
+            ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%(end_lng)s, %(end_lat)s), 4326)
+            LIMIT 1
+        ),
+        route AS (
+            SELECT *
+            FROM pgr_dijkstra(
+                %(pgr_sql)s,
+                (SELECT node_id FROM start_node),
+                (SELECT node_id FROM end_node),
+                directed := false
+            )
+        )
+        SELECT
+            json_agg(
+                json_build_object(
+                    'lat',     ST_Y(n.geom),
+                    'lng',     ST_X(n.geom),
+                    'node_id', r.node
+                )
+                ORDER BY r.path_seq
+            ) AS path,
+            SUM(e.length)        FILTER (WHERE r.edge <> -1) AS total_distance,
+            AVG(es.shadow_score) FILTER (WHERE r.edge <> -1) AS avg_shadow_score,
+            json_agg(
+                json_build_object(
+                    'edge_id',      r.edge,
+                    'shadow_score', COALESCE(es.shadow_score, 0),
+                    'cost',         COALESCE(es.cost, e.length)
+                )
+                ORDER BY r.path_seq
+            ) FILTER (WHERE r.edge <> -1) AS edge_details
+        FROM route r
+        JOIN  node        n  ON r.node    = n.node_id
+        LEFT JOIN edge    e  ON r.edge    = e.edge_id
+        LEFT JOIN edge_shadow es ON es.edge_id = e.edge_id
+        LEFT JOIN sun     s  ON s.sun_id   = es.sun_id
+            AND s.date = %(target_date)s
+            AND s.hour = %(hour)s
+        """
+ 
+        cur.execute(final_query, {
+            'start_lng':   start_lng,
+            'start_lat':   start_lat,
+            'end_lng':     end_lng,
+            'end_lat':     end_lat,
+            'pgr_sql':     pgr_edge_sql,   # pgr_dijkstra 接受字串參數
+            'target_date': target_date,
+            'hour':        hour,
+        })
+ 
         result = cur.fetchone()
         cur.close()
         conn.close()
-
+ 
+        # ── 處理結果 ──────────────────────────────────────────────────────
         if not result or not result['path']:
             return jsonify({'status': 'error', 'message': '找不到路徑'}), 404
-
-        distance = result['total_distance'] or 0
-        shade_score = result['avg_shade_score'] or 0
-        walk_time = int(distance / 80)
-
-        # 把路徑整理成座標陣列
-        path_coords = [[p['lat'], p['lng']] for p in result['path']]
-
-        # 每段路的遮蔭分數（用來顯示顏色）
+ 
+        distance     = float(result['total_distance']  or 0)
+        shadow_score = float(result['avg_shadow_score'] or 0)
         edge_details = result['edge_details'] or []
-        segment_scores = [e['shade_score'] for e in edge_details if e['edge_id'] != -1]
-
+ 
+        WALK_SPEED_M_PER_MIN = 80
+        walk_time = int(distance / WALK_SPEED_M_PER_MIN)
+ 
+        # 路徑座標 [[lat, lng], ...]
+        path_coords = [[p['lat'], p['lng']] for p in result['path']]
+ 
+        # 每段遮陰分數（給前端畫綠/黃/紅）
+        segment_scores = [e['shadow_score'] for e in edge_details]
+ 
         return jsonify({
             'status': 'success',
             'route': {
-                'path': path_coords,
+                'path':           path_coords,
                 'segment_scores': segment_scores,
                 'statistics': {
-                    'distance': round(distance, 1),
-                    'shade_score': round(shade_score, 2),
-                    'estimated_time': walk_time,
-                    'hour': hour
-                }
-            }
+                    'distance':       round(distance, 1),      # 公尺
+                    'shadow_score':   round(shadow_score, 3),  # 0~1，越大越涼
+                    'estimated_time': walk_time,               # 分鐘
+                    'hour':           hour,
+                    'date':           target_date,
+                },
+            },
         })
-
+ 
+    except KeyError as e:
+        return jsonify({'status': 'error', 'message': f'缺少必要欄位：{e}'}), 400
     except Exception as e:
-        print(f"錯誤：{e}")
+        import traceback
+        print(traceback.format_exc())
         return jsonify({'status': 'error', 'message': str(e)}), 500
-
-exec(open('admin_routes.py', encoding='utf-8').read())
-
+ 
+ 
+# ──────────────────────────────────────────
 if __name__ == '__main__':
     print("🚀 啟動陰影導航 API v2...")
-    print("📍 網址：http://localhost:5000")
+    print(f"📍 網址：http://localhost:5000")
+    print(f"📅 固定日期：{TARGET_DATE}  有效時段：{HOUR_MIN}:00 ~ {HOUR_MAX}:00")
     app.run(host='0.0.0.0', port=5000, debug=True)
+ 
