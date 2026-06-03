@@ -80,11 +80,7 @@
             border-left: 2px solid transparent;
         }
 
-        .nav-item:hover {
-            background: var(--bg-hover);
-            color: var(--text);
-        }
-
+        .nav-item:hover { background: var(--bg-hover); color: var(--text); }
         .nav-item.active {
             background: rgba(45,125,210,0.1);
             color: var(--accent);
@@ -103,129 +99,46 @@
         }
 
         /* ── Main ── */
-        .main {
-            margin-left: 220px;
-            flex: 1;
-            padding: 32px;
-            min-height: 100vh;
-        }
-
+        .main { margin-left: 220px; flex: 1; padding: 32px; min-height: 100vh; }
         .page { display: none; }
         .page.active { display: block; }
 
-        .page-title {
-            font-family: var(--mono);
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .page-sub {
-            font-size: 13px;
-            color: var(--text-dim);
-            margin-bottom: 28px;
-        }
+        .page-title { font-family: var(--mono); font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .page-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 28px; }
 
         /* ── Cards ── */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
         .card-title {
-            font-family: var(--mono);
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-dim);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 16px;
+            font-family: var(--mono); font-size: 11px; font-weight: 700;
+            color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px;
         }
 
         /* ── Stats Grid ── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
+        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
         .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px;
-            transition: border-color 0.2s;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px; transition: border-color 0.2s;
         }
-
         .stat-card:hover { border-color: var(--accent); }
-
         .stat-icon { font-size: 20px; margin-bottom: 8px; }
-
-        .stat-value {
-            font-family: var(--mono);
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-dim);
-        }
+        .stat-value { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .stat-label { font-size: 11px; color: var(--text-dim); }
 
         /* ── Table ── */
-        .table-wrap {
-            overflow-x: auto;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        thead tr {
-            background: var(--bg-hover);
-        }
-
+        .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead tr { background: var(--bg-hover); }
         th {
-            padding: 10px 14px;
-            text-align: left;
-            font-family: var(--mono);
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
+            padding: 10px 14px; text-align: left; font-family: var(--mono);
+            font-size: 10px; font-weight: 700; color: var(--text-dim);
+            letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border);
         }
-
-        td {
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text);
-        }
-
+        td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
         tr:last-child td { border-bottom: none; }
-
         tr:hover td { background: var(--bg-hover); }
 
         /* ── Badges ── */
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-family: var(--mono);
-            font-weight: 700;
-        }
-
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: var(--mono); font-weight: 700; }
         .badge-blue { background: rgba(45,125,210,0.2); color: #60a5fa; }
         .badge-green { background: rgba(34,197,94,0.2); color: #4ade80; }
         .badge-red { background: rgba(239,68,68,0.2); color: #f87171; }
@@ -233,239 +146,92 @@
 
         /* ── Buttons ── */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            font-size: 13px;
-            font-family: var(--sans);
-            cursor: pointer;
-            transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px; border-radius: 8px; border: none;
+            font-size: 13px; font-family: var(--sans); cursor: pointer; transition: all 0.15s;
         }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
+        .btn-primary { background: var(--accent); color: white; }
         .btn-primary:hover { background: #2563eb; }
-
-        .btn-success {
-            background: rgba(34,197,94,0.15);
-            color: #4ade80;
-            border: 1px solid rgba(34,197,94,0.3);
-        }
+        .btn-success { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
         .btn-success:hover { background: rgba(34,197,94,0.25); }
-
-        .btn-danger {
-            background: rgba(239,68,68,0.15);
-            color: #f87171;
-            border: 1px solid rgba(239,68,68,0.3);
-        }
+        .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
         .btn-danger:hover { background: rgba(239,68,68,0.25); }
-
-        .btn-ghost {
-            background: var(--bg-hover);
-            color: var(--text-dim);
-            border: 1px solid var(--border);
-        }
+        .btn-ghost { background: var(--bg-hover); color: var(--text-dim); border: 1px solid var(--border); }
         .btn-ghost:hover { color: var(--text); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* ── Form ── */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
-
-        label {
-            font-size: 11px;
-            font-family: var(--mono);
-            color: var(--text-dim);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
+        label { font-size: 11px; font-family: var(--mono); color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
         input, select, textarea {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 12px;
-            color: var(--text);
-            font-size: 13px;
-            font-family: var(--sans);
-            outline: none;
-            transition: border-color 0.15s;
+            background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; color: var(--text); font-size: 13px; font-family: var(--sans);
+            outline: none; transition: border-color 0.15s;
         }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--accent);
-        }
-
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
         select option { background: var(--bg-card); }
 
         /* ── Progress ── */
-        .progress-wrap {
-            background: var(--bg);
-            border-radius: 4px;
-            height: 8px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            border-radius: 4px;
-            background: linear-gradient(90deg, var(--accent), #22c55e);
-            transition: width 0.5s;
-        }
+        .progress-wrap { background: var(--bg); border-radius: 4px; height: 8px; overflow: hidden; margin-top: 8px; }
+        .progress-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), #22c55e); transition: width 0.5s; }
 
         /* ── Log ── */
         .log-box {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
-            font-family: var(--mono);
-            font-size: 12px;
-            color: #4ade80;
-            max-height: 300px;
-            overflow-y: auto;
-            line-height: 1.6;
+            background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+            padding: 16px; font-family: var(--mono); font-size: 12px; color: #4ade80;
+            max-height: 300px; overflow-y: auto; line-height: 1.6;
         }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 18px;
+            font-size: 13px; font-family: var(--mono);
+            z-index: 999; transform: translateY(80px); opacity: 0;
+            transition: all 0.3s; pointer-events: none;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-color: #4ade80; color: #4ade80; }
+        .toast.error { border-color: #f87171; color: #f87171; }
 
         /* ── Modal ── */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center;
         }
-
         .modal-overlay.show { display: flex; }
-
-        .modal {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            width: 480px;
-            max-width: 90vw;
-        }
-
-        .modal-title {
-            font-family: var(--mono);
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-top: 20px;
-        }
+        .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; width: 480px; max-width: 90vw; }
+        .modal-title { font-family: var(--mono); font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
 
         /* ── Toolbar ── */
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            gap: 12px;
-        }
-
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; }
         .search-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 12px;
-            flex: 1;
-            max-width: 300px;
+            display: flex; align-items: center; gap: 8px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 6px 12px; flex: 1; max-width: 300px;
         }
-
-        .search-box input {
-            background: none;
-            border: none;
-            padding: 0;
-            font-size: 13px;
-            flex: 1;
-        }
+        .search-box input { background: none; border: none; padding: 0; font-size: 13px; flex: 1; }
 
         /* ── Connectivity ── */
-        .connectivity-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
+        .connectivity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         .connectivity-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px;
-            text-align: center;
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px; text-align: center;
         }
-
-        .connectivity-number {
-            font-family: var(--mono);
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+        .connectivity-number { font-family: var(--mono); font-size: 28px; font-weight: 700; margin-bottom: 4px; }
 
         /* ── Shade Bar ── */
-        .shade-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .shade-bar { display: flex; align-items: center; gap: 8px; }
+        .shade-bar-track { flex: 1; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+        .shade-bar-fill { height: 100%; border-radius: 3px; }
+        .shade-text { font-family: var(--mono); font-size: 11px; color: var(--text-dim); width: 35px; text-align: right; }
 
-        .shade-bar-track {
-            flex: 1;
-            height: 6px;
-            background: var(--bg);
-            border-radius: 3px;
-            overflow: hidden;
-        }
+        @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
 
-        .shade-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-        }
-
-        .shade-text {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-dim);
-            width: 35px;
-            text-align: right;
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 1200px) {
-            .stats-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 20px 0;
-        }
-
+        .divider { height: 1px; background: var(--border); margin: 20px 0; }
         .flex { display: flex; }
         .gap-8 { gap: 8px; }
         .gap-12 { gap: 12px; }
@@ -483,30 +249,33 @@
 </head>
 <body>
 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <!-- Sidebar -->
 <nav class="sidebar">
     <div class="sidebar-logo">
         <div class="logo-icon">☀️</div>
         <div class="logo-title">Shadow Nav</div>
-        <div class="logo-sub">管理者介面 v1.0</div>
+        <div class="logo-sub">管理者介面 v2.0</div>
     </div>
 
     <div class="nav-section">主要功能</div>
-    <div class="nav-item active" onclick="showPage('dashboard')">
+    <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard', this)">
         <span class="nav-icon">📊</span> Dashboard
     </div>
-    <div class="nav-item" onclick="showPage('trees')">
+    <div class="nav-item" data-page="trees" onclick="showPage('trees', this)">
         <span class="nav-icon">🌳</span> 行道樹管理
     </div>
-    <div class="nav-item" onclick="showPage('buildings')">
+    <div class="nav-item" data-page="buildings" onclick="showPage('buildings', this)">
         <span class="nav-icon">🏢</span> 建築物管理
     </div>
 
     <div class="nav-section">系統</div>
-    <div class="nav-item" onclick="showPage('shadows')">
+    <div class="nav-item" data-page="shadows" onclick="showPage('shadows', this)">
         <span class="nav-icon">☀️</span> 陰影計算
     </div>
-    <div class="nav-item" onclick="showPage('network')">
+    <div class="nav-item" data-page="network" onclick="showPage('network', this)">
         <span class="nav-icon">🗺️</span> 路網管理
     </div>
 
@@ -528,48 +297,26 @@
         <div class="page-title">Dashboard</div>
         <div class="page-sub">系統資料總覽</div>
 
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card">
-                <div class="stat-icon">🏙️</div>
-                <div class="stat-value" id="stat-regions">—</div>
-                <div class="stat-label">行政區</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🏢</div>
-                <div class="stat-value" id="stat-buildings">—</div>
-                <div class="stat-label">建築物</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🌳</div>
-                <div class="stat-value" id="stat-trees">—</div>
-                <div class="stat-label">行道樹</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📍</div>
-                <div class="stat-value" id="stat-nodes">—</div>
-                <div class="stat-label">路口節點</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🛤️</div>
-                <div class="stat-value" id="stat-edges">—</div>
-                <div class="stat-label">路段</div>
-            </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon">🏙️</div><div class="stat-value" id="stat-regions">—</div><div class="stat-label">行政區</div></div>
+            <div class="stat-card"><div class="stat-icon">🏢</div><div class="stat-value" id="stat-buildings">—</div><div class="stat-label">建築物</div></div>
+            <div class="stat-card"><div class="stat-icon">🌳</div><div class="stat-value" id="stat-trees">—</div><div class="stat-label">行道樹</div></div>
+            <div class="stat-card"><div class="stat-icon">📍</div><div class="stat-value" id="stat-nodes">—</div><div class="stat-label">路口節點</div></div>
+            <div class="stat-card"><div class="stat-icon">🛤️</div><div class="stat-value" id="stat-edges">—</div><div class="stat-label">路段</div></div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="card">
                 <div class="card-title">陰影計算狀態</div>
-                <div id="shadowStatus">
-                    <div class="flex items-center gap-8 mb-16">
-                        <span id="shadowDot" style="width:8px;height:8px;border-radius:50%;background:#4ade80;"></span>
-                        <span id="shadowStatusText" class="mono" style="font-size:13px;">讀取中...</span>
-                    </div>
-                    <div style="font-size:12px; color:var(--text-dim); margin-bottom:8px;">
-                        已計算時段：<span class="mono text-blue" id="shadowCount">—</span> / 72
-                    </div>
-                    <div class="progress-wrap">
-                        <div class="progress-bar" id="shadowProgress" style="width:0%"></div>
-                    </div>
+                <div class="flex items-center gap-8 mb-16">
+                    <span id="shadowDot" style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;"></span>
+                    <span id="shadowStatusText" class="mono" style="font-size:13px;">讀取中...</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-dim); margin-bottom:8px;">
+                    已計算時段：<span class="mono text-blue" id="shadowCount">—</span> / 72
+                </div>
+                <div class="progress-wrap">
+                    <div class="progress-bar" id="shadowProgress" style="width:0%"></div>
                 </div>
             </div>
 
@@ -578,21 +325,13 @@
                 <div style="font-size:13px; color:var(--text-dim); margin-bottom:12px;">平均遮蔭率</div>
                 <div class="shade-bar mb-16">
                     <div class="shade-bar-track" style="height:12px;">
-                        <div class="shade-bar-fill" id="avgShadeBar"
-                             style="width:0%; background:linear-gradient(90deg,#8b1a1a,#2d7dd2)">
-                        </div>
+                        <div class="shade-bar-fill" id="avgShadeBar" style="width:0%; background:linear-gradient(90deg,#8b1a1a,#2d7dd2)"></div>
                     </div>
                     <div class="shade-text" id="avgShadeText">0%</div>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
-                    <div>
-                        <div class="text-dim">有遮蔭路段</div>
-                        <div class="mono text-blue" id="shadedEdges">—</div>
-                    </div>
-                    <div>
-                        <div class="text-dim">最高遮蔭</div>
-                        <div class="mono text-green" id="maxShade">—</div>
-                    </div>
+                    <div><div class="text-dim">有遮蔭路段</div><div class="mono text-blue" id="shadedEdges">—</div></div>
+                    <div><div class="text-dim">最高遮蔭</div><div class="mono text-green" id="maxShade">—</div></div>
                 </div>
             </div>
         </div>
@@ -606,10 +345,10 @@
         <div class="toolbar">
             <div class="search-box">
                 <span>🔍</span>
-                <input type="text" placeholder="搜尋樹木 ID 或行政區..." id="treeSearch" oninput="searchTrees()">
+                <input type="text" placeholder="搜尋樹木 ID 或行政區..." id="treeSearch" oninput="debounce(searchTrees, 400)()">
             </div>
             <div class="flex gap-8">
-                <select id="treeDistFilter" onchange="loadTrees()" style="font-size:13px;">
+                <select id="treeDistFilter" onchange="treePage=1;loadTrees()" style="font-size:13px;">
                     <option value="">全部行政區</option>
                     <option>中正區</option><option>大同區</option><option>中山區</option>
                     <option>松山區</option><option>大安區</option><option>萬華區</option>
@@ -624,14 +363,8 @@
             <table>
                 <thead>
                     <tr>
-                        <th>樹木 ID</th>
-                        <th>行政區</th>
-                        <th>緯度</th>
-                        <th>經度</th>
-                        <th>樹高 (m)</th>
-                        <th>樹冠半徑 (m)</th>
-                        <th>安全島</th>
-                        <th>操作</th>
+                        <th>樹木 ID</th><th>行政區</th><th>緯度</th><th>經度</th>
+                        <th>樹高 (m)</th><th>樹冠半徑 (m)</th><th>安全島</th><th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="treeTableBody">
@@ -643,8 +376,8 @@
         <div class="flex items-center justify-between" style="margin-top:12px;">
             <div style="font-size:12px; color:var(--text-dim);" id="treePagination">—</div>
             <div class="flex gap-8">
-                <button class="btn btn-ghost" onclick="prevPage('tree')">← 上一頁</button>
-                <button class="btn btn-ghost" onclick="nextPage('tree')">下一頁 →</button>
+                <button class="btn btn-ghost" id="treePrevBtn" onclick="prevPage('tree')">← 上一頁</button>
+                <button class="btn btn-ghost" id="treeNextBtn" onclick="nextPage('tree')">下一頁 →</button>
             </div>
         </div>
     </div>
@@ -657,10 +390,10 @@
         <div class="toolbar">
             <div class="search-box">
                 <span>🔍</span>
-                <input type="text" placeholder="搜尋建築物 ID..." id="buildingSearch" oninput="searchBuildings()">
+                <input type="text" placeholder="搜尋建築物 ID..." id="buildingSearch" oninput="debounce(searchBuildings, 400)()">
             </div>
             <div class="flex gap-8">
-                <select id="buildingDistFilter" onchange="loadBuildings()" style="font-size:13px;">
+                <select id="buildingDistFilter" onchange="buildingPage=1;loadBuildings()" style="font-size:13px;">
                     <option value="">全部行政區</option>
                     <option>中正區</option><option>大同區</option><option>中山區</option>
                     <option>松山區</option><option>大安區</option><option>萬華區</option>
@@ -674,13 +407,7 @@
         <div class="table-wrap">
             <table>
                 <thead>
-                    <tr>
-                        <th>建築物 ID</th>
-                        <th>行政區</th>
-                        <th>高度 (m)</th>
-                        <th>狀態</th>
-                        <th>操作</th>
-                    </tr>
+                    <tr><th>建築物 ID</th><th>行政區</th><th>高度 (m)</th><th>狀態</th><th>操作</th></tr>
                 </thead>
                 <tbody id="buildingTableBody">
                     <tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:40px;">讀取中...</td></tr>
@@ -691,8 +418,8 @@
         <div class="flex items-center justify-between" style="margin-top:12px;">
             <div style="font-size:12px; color:var(--text-dim);" id="buildingPagination">—</div>
             <div class="flex gap-8">
-                <button class="btn btn-ghost" onclick="prevPage('building')">← 上一頁</button>
-                <button class="btn btn-ghost" onclick="nextPage('building')">下一頁 →</button>
+                <button class="btn btn-ghost" id="buildingPrevBtn" onclick="prevPage('building')">← 上一頁</button>
+                <button class="btn btn-ghost" id="buildingNextBtn" onclick="nextPage('building')">下一頁 →</button>
             </div>
         </div>
     </div>
@@ -707,7 +434,7 @@
                 <div class="card-title">計算設定</div>
                 <div class="form-group mb-16">
                     <label>計算模式</label>
-                    <select id="shadowMode">
+                    <select id="shadowMode" onchange="document.getElementById('singleDateGroup').style.display=this.value==='single'?'block':'none'">
                         <option value="full">完整計算（8節氣 × 9小時 = 72時段）</option>
                         <option value="today">今日計算（9-17時）</option>
                         <option value="single">單一節氣</option>
@@ -719,19 +446,15 @@
                         <option value="2026-03-20">春分（03-20）</option>
                         <option value="2026-04-05">清明（04-05）</option>
                         <option value="2026-04-20">穀雨（04-20）</option>
-                        <option value="2026-06-21">夏至（06-21）</option>
+                        <option value="2026-06-21" selected>夏至（06-21）</option>
                         <option value="2026-07-23">大暑（07-23）</option>
                         <option value="2026-09-23">秋分（09-23）</option>
                         <option value="2026-10-23">霜降（10-23）</option>
                         <option value="2026-12-22">冬至（12-22）</option>
                     </select>
                 </div>
-                <button class="btn btn-success" onclick="triggerShadowCalc()" style="width:100%;">
-                    ▶ 開始計算陰影
-                </button>
-                <div style="font-size:11px; color:var(--text-dim); margin-top:8px;">
-                    ⚠️ 完整計算需要 15-30 分鐘
-                </div>
+                <button class="btn btn-success" onclick="triggerShadowCalc()" style="width:100%;">▶ 開始計算陰影</button>
+                <div style="font-size:11px; color:var(--text-dim); margin-top:8px;">⚠️ 完整計算需要 15-30 分鐘</div>
             </div>
 
             <div class="card">
@@ -754,17 +477,14 @@
 
         <div class="card">
             <div class="card-title">執行記錄</div>
-            <div class="log-box" id="shadowLog">
-                $ 等待執行...
-            </div>
+            <div class="log-box" id="shadowLog">$ 等待執行...</div>
         </div>
 
         <div class="divider"></div>
 
         <div class="card">
             <div class="card-title">節氣陰影狀態</div>
-            <div id="termStatus" style="display:grid; grid-template-columns: repeat(4,1fr); gap:8px;">
-            </div>
+            <div id="termStatus" style="display:grid; grid-template-columns: repeat(4,1fr); gap:8px;"></div>
         </div>
     </div>
 
@@ -774,18 +494,9 @@
         <div class="page-sub">檢查路網連通性、查看節點和路段統計</div>
 
         <div class="connectivity-grid">
-            <div class="connectivity-card">
-                <div class="connectivity-number text-blue" id="net-nodes">—</div>
-                <div style="font-size:12px; color:var(--text-dim);">路口節點</div>
-            </div>
-            <div class="connectivity-card">
-                <div class="connectivity-number text-green" id="net-edges">—</div>
-                <div style="font-size:12px; color:var(--text-dim);">路段數</div>
-            </div>
-            <div class="connectivity-card">
-                <div class="connectivity-number" id="net-components" style="color:#fbbf24;">—</div>
-                <div style="font-size:12px; color:var(--text-dim);">連通元件數</div>
-            </div>
+            <div class="connectivity-card"><div class="connectivity-number text-blue" id="net-nodes">—</div><div style="font-size:12px; color:var(--text-dim);">路口節點</div></div>
+            <div class="connectivity-card"><div class="connectivity-number text-green" id="net-edges">—</div><div style="font-size:12px; color:var(--text-dim);">路段數</div></div>
+            <div class="connectivity-card"><div class="connectivity-number" id="net-components" style="color:#fbbf24;">—</div><div style="font-size:12px; color:var(--text-dim);">連通元件數</div></div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
@@ -794,17 +505,13 @@
                 <div style="font-size:13px; color:var(--text-dim); margin-bottom:16px;">
                     檢查路網是否完整連通（理想狀況：1 個連通元件）
                 </div>
-                <button class="btn btn-primary" onclick="checkConnectivity()" style="width:100%;">
-                    🔍 執行連通性檢查
-                </button>
+                <button class="btn btn-primary" id="connectBtn" onclick="checkConnectivity()" style="width:100%;">🔍 執行連通性檢查</button>
                 <div id="connectivityResult" style="margin-top:12px; font-size:13px;"></div>
             </div>
 
             <div class="card">
                 <div class="card-title">路段遮蔭分布</div>
-                <div id="shadeDistribution" style="font-size:13px; color:var(--text-dim);">
-                    讀取中...
-                </div>
+                <div id="shadeDistribution" style="font-size:13px; color:var(--text-dim);">讀取中...</div>
             </div>
         </div>
 
@@ -813,12 +520,7 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr>
-                            <th>行政區</th>
-                            <th>節點數</th>
-                            <th>路段數</th>
-                            <th>平均遮蔭率</th>
-                        </tr>
+                        <tr><th>行政區</th><th>節點數</th><th>路段數</th><th>平均遮蔭率</th></tr>
                     </thead>
                     <tbody id="districtNetworkBody">
                         <tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:40px;">讀取中...</td></tr>
@@ -830,15 +532,11 @@
 
 </main>
 
-<!-- ── Modal: 新增樹木 ── -->
+<!-- Modal: 新增樹木 -->
 <div class="modal-overlay" id="addTreeModal">
     <div class="modal">
         <div class="modal-title">🌳 新增樹木</div>
         <div class="form-grid">
-            <div class="form-group">
-                <label>樹木 ID</label>
-                <input type="text" id="newTreeId" placeholder="例：TREE_99999">
-            </div>
             <div class="form-group">
                 <label>行政區</label>
                 <select id="newTreeDist">
@@ -846,6 +544,13 @@
                     <option>松山區</option><option>大安區</option><option>萬華區</option>
                     <option>信義區</option><option>士林區</option><option>北投區</option>
                     <option>內湖區</option><option>南港區</option><option>文山區</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>安全島</label>
+                <select id="newTreeIsland">
+                    <option value="false">否</option>
+                    <option value="true">是</option>
                 </select>
             </div>
             <div class="form-group">
@@ -858,14 +563,11 @@
             </div>
             <div class="form-group">
                 <label>樹高 (公尺)</label>
-                <input type="number" id="newTreeHeight" placeholder="8.0" step="0.1" min="0">
+                <input type="number" id="newTreeHeight" placeholder="8.0" step="0.1" min="0" value="8.0">
             </div>
             <div class="form-group">
-                <label>安全島</label>
-                <select id="newTreeIsland">
-                    <option value="false">否</option>
-                    <option value="true">是</option>
-                </select>
+                <label>樹冠半徑 (公尺)</label>
+                <input type="number" id="newTreeCanopy" placeholder="3.0" step="0.1" min="0" value="3.0">
             </div>
         </div>
         <div class="modal-footer">
@@ -875,15 +577,11 @@
     </div>
 </div>
 
-<!-- ── Modal: 新增建築物 ── -->
+<!-- Modal: 新增建築物 -->
 <div class="modal-overlay" id="addBuildingModal">
     <div class="modal">
         <div class="modal-title">🏢 新增建築物</div>
         <div class="form-grid">
-            <div class="form-group">
-                <label>建築物 ID</label>
-                <input type="text" id="newBuildingId" placeholder="例：OSM_999999">
-            </div>
             <div class="form-group">
                 <label>行政區</label>
                 <select id="newBuildingDist">
@@ -893,14 +591,14 @@
                     <option>內湖區</option><option>南港區</option><option>文山區</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label>建築高度 (公尺)</label>
+                <input type="number" id="newBuildingHeight" placeholder="30.0" step="0.5" min="0" value="30.0">
+            </div>
             <div class="form-group" style="grid-column: 1/-1;">
                 <label>建築物輪廓（WKT 格式）</label>
                 <textarea id="newBuildingWkt" rows="3"
                     placeholder="POLYGON((121.54 25.03, 121.541 25.03, 121.541 25.031, 121.54 25.031, 121.54 25.03))"></textarea>
-            </div>
-            <div class="form-group">
-                <label>建築高度 (公尺)</label>
-                <input type="number" id="newBuildingHeight" placeholder="30.0" step="0.5" min="0">
             </div>
         </div>
         <div class="modal-footer">
@@ -911,180 +609,192 @@
 </div>
 
 <script>
+// ── 設定 ────────────────────────────────────────────
 const API = 'https://clench-outrank-moustache.ngrok-free.dev';
-let treePage = 1, buildingPage = 1;
+let treePage = 1, treeTotal = 0;
+let buildingPage = 1, buildingTotal = 0;
 const PAGE_SIZE = 20;
 
-// ── 頁面切換 ──
-function showPage(name) {
+// ── 工具函式 ─────────────────────────────────────────
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
+    el.className = `toast ${type} show`;
+    setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function debounce(fn, ms) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+// ── 頁面切換 ─────────────────────────────────────────
+function showPage(name, el) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(`page-${name}`).classList.add('active');
-    event.currentTarget.classList.add('active');
+    el.classList.add('active');
 
     if (name === 'dashboard') loadDashboard();
-    else if (name === 'trees') loadTrees();
-    else if (name === 'buildings') loadBuildings();
+    else if (name === 'trees') { treePage = 1; loadTrees(); }
+    else if (name === 'buildings') { buildingPage = 1; loadBuildings(); }
     else if (name === 'shadows') loadShadowStatus();
     else if (name === 'network') loadNetwork();
 }
 
-// ── Dashboard ──
+// ── Dashboard ────────────────────────────────────────
 async function loadDashboard() {
     try {
-        const res = await fetch(`${API}/api/stats`);
+        const res  = await fetch(`${API}/api/stats`);
         const data = await res.json();
-        const d = data.data;
-        document.getElementById('stat-regions').textContent = d.regions?.toLocaleString() || '—';
-        document.getElementById('stat-buildings').textContent = d.buildings?.toLocaleString() || '—';
-        document.getElementById('stat-trees').textContent = d.trees?.toLocaleString() || '—';
-        document.getElementById('stat-nodes').textContent = d.nodes?.toLocaleString() || '—';
-        document.getElementById('stat-edges').textContent = d.edges?.toLocaleString() || '—';
-    } catch (e) {
-        console.error(e);
-    }
+        const d    = data.data;
+        document.getElementById('stat-regions').textContent   = d.regions?.toLocaleString()   || '—';
+        document.getElementById('stat-buildings').textContent = d.buildings?.toLocaleString() || d.edges?.toLocaleString() || '—';
+        document.getElementById('stat-trees').textContent     = d.trees?.toLocaleString()     || '—';
+        document.getElementById('stat-nodes').textContent     = d.nodes?.toLocaleString()     || '—';
+        document.getElementById('stat-edges').textContent     = d.edges?.toLocaleString()     || '—';
+    } catch (e) { console.error('stats error', e); }
 
     try {
-        const res = await fetch(`${API}/api/admin/shade-stats`);
+        const res  = await fetch(`${API}/api/admin/shade-stats`);
         const data = await res.json();
         if (data.status === 'success') {
-            const s = data.data;
+            const s   = data.data;
             const pct = Math.round((s.avg_shade || 0) * 100);
-            document.getElementById('avgShadeBar').style.width = pct + '%';
+            document.getElementById('avgShadeBar').style.width  = pct + '%';
             document.getElementById('avgShadeText').textContent = pct + '%';
-            document.getElementById('shadedEdges').textContent = (s.shaded_edges || 0).toLocaleString();
-            document.getElementById('maxShade').textContent = Math.round((s.max_shade || 0) * 100) + '%';
-            document.getElementById('shadowCount').textContent = s.shadow_count || 0;
+            document.getElementById('shadedEdges').textContent  = (s.shaded_edges || 0).toLocaleString();
+            document.getElementById('maxShade').textContent     = Math.round((s.max_shade || 0) * 100) + '%';
+            document.getElementById('shadowCount').textContent  = s.shadow_count || 0;
             const prog = Math.round(((s.shadow_count || 0) / 72) * 100);
-            document.getElementById('shadowProgress').style.width = prog + '%';
-            document.getElementById('shadowStatusText').textContent = s.shadow_count > 0 ? `已計算 ${prog}%` : '尚未計算';
+            document.getElementById('shadowProgress').style.width    = prog + '%';
+            document.getElementById('shadowStatusText').textContent  = s.shadow_count > 0 ? `已計算 ${prog}%` : '尚未計算';
         }
-    } catch {}
+    } catch (e) { console.error('shade-stats error', e); }
 }
 
-// ── Trees ──
+// ── Trees ─────────────────────────────────────────────
 async function loadTrees() {
-    const dist = document.getElementById('treeDistFilter').value;
+    const dist   = document.getElementById('treeDistFilter').value;
     const search = document.getElementById('treeSearch')?.value || '';
     const offset = (treePage - 1) * PAGE_SIZE;
 
+    const tbody = document.getElementById('treeTableBody');
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-dim);padding:24px;">讀取中...</td></tr>';
+
     try {
         const params = new URLSearchParams({ limit: PAGE_SIZE, offset, dist, search });
-        const res = await fetch(`${API}/api/admin/trees?${params}`);
-        const data = await res.json();
+        const res    = await fetch(`${API}/api/admin/trees?${params}`);
+        const data   = await res.json();
+        if (data.status !== 'success') throw new Error(data.message);
 
-        if (data.status !== 'success') return;
         const trees = data.data;
-        const total = data.total;
+        treeTotal   = data.total;
 
-        const tbody = document.getElementById('treeTableBody');
         if (!trees.length) {
             tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-dim);padding:40px;">沒有資料</td></tr>';
-            return;
+        } else {
+            tbody.innerHTML = trees.map(t => `
+                <tr>
+                    <td class="mono" style="font-size:12px;">${t.t_id}</td>
+                    <td><span class="badge badge-blue">${t.t_dist || '—'}</span></td>
+                    <td class="mono">${t.lat?.toFixed(5) || '—'}</td>
+                    <td class="mono">${t.lng?.toFixed(5) || '—'}</td>
+                    <td class="mono">${t.t_height?.toFixed(1) || '—'}</td>
+                    <td class="mono">${t.canopy_radius?.toFixed(2) || '—'}</td>
+                    <td>${t.traffic_island
+                        ? '<span class="badge badge-yellow">是</span>'
+                        : '<span class="badge badge-green">否</span>'}</td>
+                    <td>
+                        <div class="flex gap-8">
+                            <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;"
+                                onclick="deleteTree(${t.t_id})">刪除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        tbody.innerHTML = trees.map(t => `
-            <tr>
-                <td class="mono" style="font-size:12px;">${t.t_id}</td>
-                <td><span class="badge badge-blue">${t.t_dist || '—'}</span></td>
-                <td class="mono">${t.lat?.toFixed(5) || '—'}</td>
-                <td class="mono">${t.lng?.toFixed(5) || '—'}</td>
-                <td class="mono">${t.t_height?.toFixed(1) || '—'}</td>
-                <td class="mono">${t.canopy_radius?.toFixed(2) || '—'}</td>
-                <td>${t.traffic_island ? '<span class="badge badge-yellow">是</span>' : '<span class="badge badge-green">否</span>'}</td>
-                <td>
-                    <div class="flex gap-8">
-                        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="editTree('${t.t_id}')">編輯</button>
-                        <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteTree('${t.t_id}')">刪除</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-
-        document.getElementById('treePagination').textContent =
-            `第 ${offset+1}-${Math.min(offset+PAGE_SIZE, total)} 筆，共 ${total.toLocaleString()} 筆`;
+        const start = offset + 1;
+        const end   = Math.min(offset + PAGE_SIZE, treeTotal);
+        document.getElementById('treePagination').textContent = `第 ${start}–${end} 筆，共 ${treeTotal.toLocaleString()} 筆`;
+        document.getElementById('treePrevBtn').disabled = treePage <= 1;
+        document.getElementById('treeNextBtn').disabled = offset + PAGE_SIZE >= treeTotal;
 
     } catch (e) {
-        document.getElementById('treeTableBody').innerHTML =
-            '<tr><td colspan="8" style="text-align:center;color:#f87171;padding:40px;">無法連線到後端</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#f87171;padding:40px;">無法載入：${e.message}</td></tr>`;
     }
 }
 
-function searchTrees() {
-    treePage = 1;
-    loadTrees();
-}
+function searchTrees() { treePage = 1; loadTrees(); }
 
 function prevPage(type) {
-    if (type === 'tree' && treePage > 1) { treePage--; loadTrees(); }
+    if (type === 'tree'     && treePage     > 1) { treePage--;     loadTrees();     }
     if (type === 'building' && buildingPage > 1) { buildingPage--; loadBuildings(); }
 }
-
 function nextPage(type) {
-    if (type === 'tree') { treePage++; loadTrees(); }
-    if (type === 'building') { buildingPage++; loadBuildings(); }
+    if (type === 'tree'     && (treePage - 1) * PAGE_SIZE + PAGE_SIZE < treeTotal)     { treePage++;     loadTrees();     }
+    if (type === 'building' && (buildingPage - 1) * PAGE_SIZE + PAGE_SIZE < buildingTotal) { buildingPage++; loadBuildings(); }
 }
 
-// ── Buildings ──
+// ── Buildings ─────────────────────────────────────────
 async function loadBuildings() {
-    const dist = document.getElementById('buildingDistFilter').value;
+    const dist   = document.getElementById('buildingDistFilter').value;
     const search = document.getElementById('buildingSearch')?.value || '';
     const offset = (buildingPage - 1) * PAGE_SIZE;
 
+    const tbody = document.getElementById('buildingTableBody');
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px;">讀取中...</td></tr>';
+
     try {
         const params = new URLSearchParams({ limit: PAGE_SIZE, offset, dist, search });
-        const res = await fetch(`${API}/api/admin/buildings?${params}`);
-        const data = await res.json();
+        const res    = await fetch(`${API}/api/admin/buildings?${params}`);
+        const data   = await res.json();
+        if (data.status !== 'success') throw new Error(data.message);
 
-        if (data.status !== 'success') return;
         const buildings = data.data;
-        const total = data.total;
+        buildingTotal   = data.total;
 
-        const tbody = document.getElementById('buildingTableBody');
         if (!buildings.length) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:40px;">沒有資料</td></tr>';
-            return;
+        } else {
+            tbody.innerHTML = buildings.map(b => `
+                <tr>
+                    <td class="mono" style="font-size:12px;">${b.b_id}</td>
+                    <td><span class="badge badge-blue">${b.b_dist || '未知'}</span></td>
+                    <td class="mono">${b.b_height?.toFixed(1) || '—'} m</td>
+                    <td><span class="badge badge-green">正常</span></td>
+                    <td>
+                        <div class="flex gap-8">
+                            <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;"
+                                onclick="deleteBuilding(${b.b_id})">刪除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        tbody.innerHTML = buildings.map(b => `
-            <tr>
-                <td class="mono" style="font-size:12px;">${b.b_id}</td>
-                <td><span class="badge badge-blue">${b.b_dist || '未知'}</span></td>
-                <td class="mono">${b.b_height?.toFixed(1) || '—'} m</td>
-                <td><span class="badge badge-green">正常</span></td>
-                <td>
-                    <div class="flex gap-8">
-                        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="editBuilding('${b.b_id}', ${b.b_height})">編輯</button>
-                        <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteBuilding('${b.b_id}')">刪除</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-
-        document.getElementById('buildingPagination').textContent =
-            `第 ${offset+1}-${Math.min(offset+PAGE_SIZE, total)} 筆，共 ${total.toLocaleString()} 筆`;
+        const start = offset + 1;
+        const end   = Math.min(offset + PAGE_SIZE, buildingTotal);
+        document.getElementById('buildingPagination').textContent = `第 ${start}–${end} 筆，共 ${buildingTotal.toLocaleString()} 筆`;
+        document.getElementById('buildingPrevBtn').disabled = buildingPage <= 1;
+        document.getElementById('buildingNextBtn').disabled = offset + PAGE_SIZE >= buildingTotal;
 
     } catch (e) {
-        document.getElementById('buildingTableBody').innerHTML =
-            '<tr><td colspan="5" style="text-align:center;color:#f87171;padding:40px;">無法連線到後端</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#f87171;padding:40px;">無法載入：${e.message}</td></tr>`;
     }
 }
 
-function searchBuildings() {
-    buildingPage = 1;
-    loadBuildings();
-}
+function searchBuildings() { buildingPage = 1; loadBuildings(); }
 
-// ── Shadow ──
+// ── Shadow ────────────────────────────────────────────
 function loadShadowStatus() {
     const terms = [
-        ['春分','2026-03-20'],['清明','2026-04-05'],['穀雨','2026-04-20'],
-        ['夏至','2026-06-21'],['大暑','2026-07-23'],['秋分','2026-09-23'],
-        ['霜降','2026-10-23'],['冬至','2026-12-22']
+        ['春分','2026-03-20'],['清明','2026-04-05'],['穀雨','2026-04-20'],['夏至','2026-06-21'],
+        ['大暑','2026-07-23'],['秋分','2026-09-23'],['霜降','2026-10-23'],['冬至','2026-12-22']
     ];
 
-    const container = document.getElementById('termStatus');
-    container.innerHTML = terms.map(([name, date]) => `
+    document.getElementById('termStatus').innerHTML = terms.map(([name, date]) => `
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
             <div style="font-size:14px;margin-bottom:4px;">${name}</div>
             <div class="mono" style="font-size:11px;color:var(--text-dim);">${date}</div>
@@ -1092,61 +802,64 @@ function loadShadowStatus() {
         </div>
     `).join('');
 
-    fetch(`${API}/api/admin/shadow-status`).then(r => r.json()).then(data => {
-        if (data.status === 'success') {
-            document.getElementById('savedShadows').textContent = data.data.count;
-            data.data.dates?.forEach(date => {
-                const el = document.getElementById(`term-${date}`);
-                if (el) {
-                    el.className = 'badge badge-green';
-                    el.textContent = '已計算';
-                }
-            });
-        }
-    }).catch(() => {});
+    fetch(`${API}/api/admin/shadow-status`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('savedShadows').textContent = data.data.count;
+                data.data.dates?.forEach(date => {
+                    const el = document.getElementById(`term-${date}`);
+                    if (el) { el.className = 'badge badge-green'; el.textContent = '已計算'; }
+                });
+            }
+        }).catch(() => {});
 }
+
+let shadowPollInterval = null;
 
 function triggerShadowCalc() {
     const log = document.getElementById('shadowLog');
-    log.textContent = '$ 開始執行陰影計算...\n$ 請在 CMD 執行：\n$ python compute_shadows.py\n\n$ 此頁面會自動更新進度...';
-    document.getElementById('calcStatusText').textContent = '計算中...';
+    log.textContent = `$ [${new Date().toLocaleTimeString()}] 開始監測陰影計算狀態...\n$ 請在伺服器執行：python compute_shadows.py`;
+    document.getElementById('calcStatusText').textContent = '監測中...';
     document.getElementById('calcStatusDot').style.background = '#fbbf24';
 
-    let count = 0;
-    const interval = setInterval(async () => {
+    if (shadowPollInterval) clearInterval(shadowPollInterval);
+
+    shadowPollInterval = setInterval(async () => {
         try {
-            const res = await fetch(`${API}/api/admin/shadow-status`);
+            const res  = await fetch(`${API}/api/admin/shadow-status`);
             const data = await res.json();
             if (data.status === 'success') {
-                count = data.data.count;
-                const pct = Math.round((count / 72) * 100);
-                document.getElementById('calcProgress').textContent = `${count} / 72`;
+                const count = data.data.count;
+                const pct   = Math.round((count / 72) * 100);
+                document.getElementById('calcProgress').textContent    = `${count} / 72`;
                 document.getElementById('calcProgressBar').style.width = pct + '%';
-                document.getElementById('savedShadows').textContent = count;
-                log.textContent += `\n$ ${new Date().toLocaleTimeString()} 已完成 ${count}/72 個時段`;
+                document.getElementById('savedShadows').textContent    = count;
+                log.textContent += `\n$ [${new Date().toLocaleTimeString()}] 已完成 ${count}/72 個時段`;
                 log.scrollTop = log.scrollHeight;
 
                 if (count >= 72) {
-                    clearInterval(interval);
-                    document.getElementById('calcStatusText').textContent = '計算完成 ✅';
+                    clearInterval(shadowPollInterval);
+                    document.getElementById('calcStatusText').textContent    = '計算完成 ✅';
                     document.getElementById('calcStatusDot').style.background = '#4ade80';
+                    toast('陰影計算完成！');
                 }
             }
         } catch {}
     }, 5000);
 }
 
-// ── Network ──
+// ── Network ───────────────────────────────────────────
 async function loadNetwork() {
     try {
-        const res = await fetch(`${API}/api/stats`);
+        const res  = await fetch(`${API}/api/stats`);
         const data = await res.json();
         document.getElementById('net-nodes').textContent = data.data.nodes?.toLocaleString() || '—';
         document.getElementById('net-edges').textContent = data.data.edges?.toLocaleString() || '—';
     } catch {}
 
     try {
-        const res = await fetch(`${API}/api/admin/district-network`);
+        const res  = await fetch(`${API}/api/admin/district-network`);
         const data = await res.json();
         if (data.status === 'success') {
             const tbody = document.getElementById('districtNetworkBody');
@@ -1166,130 +879,123 @@ async function loadNetwork() {
                                 <div class="shade-text">${shade}%</div>
                             </div>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             }).join('');
+
+            // 遮蔭分布摘要
+            const total    = data.data.length;
+            const avgShade = data.data.reduce((s, d) => s + (d.avg_shade || 0), 0) / (total || 1);
+            document.getElementById('shadeDistribution').innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+                    <div><div class="text-dim">行政區數</div><div class="mono text-blue">${total}</div></div>
+                    <div><div class="text-dim">全市平均遮蔭</div><div class="mono text-green">${Math.round(avgShade*100)}%</div></div>
+                </div>`;
         }
     } catch {}
 }
 
 async function checkConnectivity() {
-    const btn = event.currentTarget;
+    const btn = document.getElementById('connectBtn');
     btn.textContent = '🔍 檢查中...';
     btn.disabled = true;
 
     try {
-        const res = await fetch(`${API}/api/admin/connectivity`);
+        const res  = await fetch(`${API}/api/admin/connectivity`);
         const data = await res.json();
         const result = document.getElementById('connectivityResult');
         if (data.status === 'success') {
             const count = data.data.component_count;
             document.getElementById('net-components').textContent = count;
-            if (count === 1) {
-                result.innerHTML = '<span style="color:#4ade80;">✅ 路網完整連通！所有路口都可以到達。</span>';
-            } else {
-                result.innerHTML = `<span style="color:#f59e0b;">⚠️ 路網有 ${count} 個分離元件，可能有孤立路段。</span>`;
-            }
+            result.innerHTML = count === 1
+                ? '<span class="text-green">✅ 路網完整連通！所有路口都可以到達。</span>'
+                : `<span class="text-yellow">⚠️ 路網有 ${count} 個分離元件，可能有孤立路段。</span>`;
         }
-    } catch (e) {
+    } catch {
         document.getElementById('connectivityResult').innerHTML =
-            '<span style="color:#f87171;">❌ 無法執行檢查，請確認後端運作中。</span>';
+            '<span class="text-red">❌ 無法執行檢查，請確認後端運作中。</span>';
     }
 
     btn.textContent = '🔍 執行連通性檢查';
     btn.disabled = false;
 }
 
-// ── CRUD ──
-function showAddTree() { document.getElementById('addTreeModal').classList.add('show'); }
+// ── CRUD ──────────────────────────────────────────────
+function showAddTree()     { document.getElementById('addTreeModal').classList.add('show'); }
 function showAddBuilding() { document.getElementById('addBuildingModal').classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function closeModal(id)    { document.getElementById(id).classList.remove('show'); }
 
 async function addTree() {
     const body = {
-        t_id: document.getElementById('newTreeId').value,
-        t_dist: document.getElementById('newTreeDist').value,
-        lat: parseFloat(document.getElementById('newTreeLat').value),
-        lng: parseFloat(document.getElementById('newTreeLng').value),
-        t_height: parseFloat(document.getElementById('newTreeHeight').value),
-        traffic_island: document.getElementById('newTreeIsland').value === 'true'
+        t_dist:         document.getElementById('newTreeDist').value,
+        lat:            parseFloat(document.getElementById('newTreeLat').value),
+        lng:            parseFloat(document.getElementById('newTreeLng').value),
+        t_height:       parseFloat(document.getElementById('newTreeHeight').value),
+        canopy_radius:  parseFloat(document.getElementById('newTreeCanopy').value),
+        traffic_island: document.getElementById('newTreeIsland').value === 'true',
     };
 
+    if (!body.lat || !body.lng) { toast('請填入緯度與經度', 'error'); return; }
+
     try {
-        const res = await fetch(`${API}/api/admin/trees`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
+        const res  = await fetch(`${API}/api/admin/trees`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
         });
         const data = await res.json();
         if (data.status === 'success') {
             closeModal('addTreeModal');
             loadTrees();
-            alert('✅ 樹木新增成功！');
+            toast(`樹木 ${data.t_id} 新增成功！`);
         } else {
-            alert('❌ 新增失敗：' + data.message);
+            toast('新增失敗：' + data.message, 'error');
         }
-    } catch (e) {
-        alert('❌ 無法連線到後端');
-    }
+    } catch { toast('無法連線到後端', 'error'); }
 }
 
 async function addBuilding() {
     const body = {
-        b_id: document.getElementById('newBuildingId').value,
-        b_dist: document.getElementById('newBuildingDist').value,
-        footprint_wkt: document.getElementById('newBuildingWkt').value,
-        b_height: parseFloat(document.getElementById('newBuildingHeight').value)
+        b_dist:        document.getElementById('newBuildingDist').value,
+        footprint_wkt: document.getElementById('newBuildingWkt').value.trim(),
+        b_height:      parseFloat(document.getElementById('newBuildingHeight').value),
     };
 
+    if (!body.footprint_wkt) { toast('請填入建築物輪廓 WKT', 'error'); return; }
+
     try {
-        const res = await fetch(`${API}/api/admin/buildings`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
+        const res  = await fetch(`${API}/api/admin/buildings`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
         });
         const data = await res.json();
         if (data.status === 'success') {
             closeModal('addBuildingModal');
             loadBuildings();
-            alert('✅ 建築物新增成功！');
+            toast(`建築物 ${data.b_id} 新增成功！`);
         } else {
-            alert('❌ 新增失敗：' + data.message);
+            toast('新增失敗：' + data.message, 'error');
         }
-    } catch (e) {
-        alert('❌ 無法連線到後端');
-    }
+    } catch { toast('無法連線到後端', 'error'); }
 }
 
 async function deleteTree(tId) {
-    if (!confirm(`確定要刪除樹木 ${tId}？`)) return;
+    if (!confirm(`確定要刪除樹木 ${tId}？此操作不可復原。`)) return;
     try {
-        const res = await fetch(`${API}/api/admin/trees/${tId}`, { method: 'DELETE' });
+        const res  = await fetch(`${API}/api/admin/trees/${tId}`, { method: 'DELETE' });
         const data = await res.json();
-        if (data.status === 'success') loadTrees();
-        else alert('❌ 刪除失敗：' + data.message);
-    } catch { alert('❌ 無法連線到後端'); }
+        if (data.status === 'success') { loadTrees(); toast(`樹木 ${tId} 已刪除`); }
+        else toast('刪除失敗：' + data.message, 'error');
+    } catch { toast('無法連線到後端', 'error'); }
 }
 
 async function deleteBuilding(bId) {
-    if (!confirm(`確定要刪除建築物 ${bId}？`)) return;
+    if (!confirm(`確定要刪除建築物 ${bId}？此操作不可復原。`)) return;
     try {
-        const res = await fetch(`${API}/api/admin/buildings/${encodeURIComponent(bId)}`, { method: 'DELETE' });
+        const res  = await fetch(`${API}/api/admin/buildings/${bId}`, { method: 'DELETE' });
         const data = await res.json();
-        if (data.status === 'success') loadBuildings();
-        else alert('❌ 刪除失敗：' + data.message);
-    } catch { alert('❌ 無法連線到後端'); }
+        if (data.status === 'success') { loadBuildings(); toast(`建築物 ${bId} 已刪除`); }
+        else toast('刪除失敗：' + data.message, 'error');
+    } catch { toast('無法連線到後端', 'error'); }
 }
 
-function editTree(tId) { alert(`編輯功能開發中：${tId}`); }
-function editBuilding(bId, height) { alert(`編輯功能開發中：${bId}`); }
-
-document.getElementById('shadowMode').addEventListener('change', function() {
-    document.getElementById('singleDateGroup').style.display =
-        this.value === 'single' ? 'block' : 'none';
-});
-
-// 初始化
+// ── 初始化 ────────────────────────────────────────────
 loadDashboard();
 </script>
 </body>
