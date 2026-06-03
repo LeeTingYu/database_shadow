@@ -359,8 +359,24 @@ function createMarker(lat, lng, type) {
 }
 
 // ── 地圖點擊 ──────────────────────────────────────
+const TAIPEI_BOUNDS = {
+    minLat: 24.96, maxLat: 25.21,
+    minLng: 121.44, maxLng: 121.67
+};
+    
 map.on('click', (e) => {
-    const {lat, lng} = e.latlng;
+    const { lat, lng } = e.latlng;
+
+    if (lat < TAIPEI_BOUNDS.minLat || lat > TAIPEI_BOUNDS.maxLat ||
+        lng < TAIPEI_BOUNDS.minLng || lng > TAIPEI_BOUNDS.maxLng) {
+        setHint('請點選台北市範圍內的位置 🗺️');
+        setTimeout(() => {
+            if (state.mode === 'start') setHint('點擊地圖設定起點 📍');
+            else if (state.mode === 'end') setHint('點擊地圖設定終點 🏁');
+        }, 2000);
+        return;
+    }
+
     if (state.mode === 'start') setStart(lat, lng);
     else if (state.mode === 'end') setEnd(lat, lng);
 });
