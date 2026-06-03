@@ -16,7 +16,6 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:var(--bg); color:var(--text); font-family:var(--sans); display:flex; min-height:100vh; }
 
-        /* Sidebar */
         .sidebar {
             width:200px; flex-shrink:0; background:var(--bg-card);
             border-right:1px solid var(--border);
@@ -36,18 +35,15 @@
         .nav-item:hover { background:var(--bg-hover); color:var(--text); }
         .nav-item.active { background:rgba(45,125,210,.1); color:var(--accent); border-left-color:var(--accent); }
 
-        /* Main */
         .main { margin-left:200px; flex:1; padding:28px; }
         .page { display:none; }
         .page.active { display:block; }
         .page-title { font-family:var(--mono); font-size:18px; font-weight:700; margin-bottom:4px; }
         .page-sub { font-size:13px; color:var(--text-dim); margin-bottom:24px; }
 
-        /* Card */
         .card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px; }
         .card-title { font-family:var(--mono); font-size:11px; font-weight:700; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
 
-        /* Table */
         .table-wrap { overflow-x:auto; border-radius:10px; border:1px solid var(--border); }
         table { width:100%; border-collapse:collapse; font-size:13px; }
         thead tr { background:var(--bg-hover); }
@@ -56,7 +52,6 @@
         tr:last-child td { border-bottom:none; }
         tr:hover td { background:var(--bg-hover); }
 
-        /* Buttons */
         .btn { display:inline-flex; align-items:center; gap:5px; padding:7px 14px; border-radius:7px; border:none; font-size:13px; font-family:var(--sans); cursor:pointer; transition:all .15s; }
         .btn:disabled { opacity:.45; cursor:not-allowed; }
         .btn-primary { background:var(--accent); color:#fff; }
@@ -68,14 +63,11 @@
         .btn-success { background:rgba(74,222,128,.12); color:var(--green); border:1px solid rgba(74,222,128,.3); }
         .btn-success:hover:not(:disabled) { background:rgba(74,222,128,.22); }
 
-        /* Badge */
         .badge { display:inline-block; padding:2px 7px; border-radius:4px; font-size:11px; font-family:var(--mono); font-weight:700; }
         .badge-blue { background:rgba(45,125,210,.2); color:var(--blue); }
         .badge-green { background:rgba(74,222,128,.2); color:var(--green); }
         .badge-yellow { background:rgba(245,158,11,.2); color:var(--yellow); }
-        .badge-red { background:rgba(239,68,68,.2); color:var(--red); }
 
-        /* Form */
         .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:18px; }
         .form-group { display:flex; flex-direction:column; gap:5px; }
         label { font-size:11px; font-family:var(--mono); color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
@@ -85,19 +77,16 @@
         }
         input:focus, select:focus, textarea:focus { border-color:var(--accent); }
 
-        /* Toolbar */
         .toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px; }
         .search-box { display:flex; align-items:center; gap:7px; background:var(--bg-card); border:1px solid var(--border); border-radius:7px; padding:6px 11px; flex:1; max-width:280px; }
         .search-box input { background:none; border:none; padding:0; font-size:13px; flex:1; }
 
-        /* Modal */
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); z-index:200; align-items:center; justify-content:center; }
         .modal-overlay.show { display:flex; }
         .modal { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:26px; width:460px; max-width:92vw; }
         .modal-title { font-family:var(--mono); font-size:15px; font-weight:700; margin-bottom:18px; }
         .modal-footer { display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
 
-        /* Toast */
         .toast {
             position:fixed; bottom:22px; right:22px; background:var(--bg-card);
             border:1px solid var(--border); border-radius:9px; padding:11px 16px;
@@ -108,7 +97,6 @@
         .toast.ok  { border-color:var(--green); color:var(--green); }
         .toast.err { border-color:var(--red);   color:var(--red);   }
 
-        /* Edge hourly table */
         .hour-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
         .hour-card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; }
         .hour-label { font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:6px; }
@@ -117,10 +105,8 @@
         .shade-bar-wrap { height:4px; background:var(--bg-hover); border-radius:2px; margin-top:6px; overflow:hidden; }
         .shade-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,#ef4444,#2d7dd2); transition:width .4s; }
 
-        /* Recalc result */
         .result-box { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:14px; font-family:var(--mono); font-size:12px; color:var(--green); line-height:1.7; margin-top:14px; display:none; }
 
-        /* Pagination */
         .pager { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
         .pager-info { font-size:12px; color:var(--text-dim); }
 
@@ -132,23 +118,19 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- Sidebar -->
 <nav class="sidebar">
     <div class="logo">
         <div class="logo-icon">☀️</div>
         <div class="logo-title">Shadow Nav</div>
         <div class="logo-sub">管理者介面</div>
     </div>
-
     <div class="nav-section">資料管理</div>
     <div class="nav-item active" onclick="go('trees',this)"><span>🌳</span> 行道樹</div>
     <div class="nav-item" onclick="go('arcades',this)"><span>🏘️</span> 騎樓</div>
     <div class="nav-item" onclick="go('buildings',this)"><span>🏗️</span> 建築物</div>
-
     <div class="nav-section">工具</div>
     <div class="nav-item" onclick="go('edge',this)"><span>🛤️</span> Edge 查詢</div>
     <div class="nav-item" onclick="go('recalc',this)"><span>🔄</span> 手動重算</div>
-
     <div style="margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);">
         <a href="http://localhost:8080" target="_blank" style="text-decoration:none;">
             <div class="nav-item" style="padding:7px 0;border-left:none;"><span>↗️</span><span style="font-size:12px;">導航介面</span></div>
@@ -158,15 +140,14 @@
 
 <main class="main">
 
-    <!-- ══ 行道樹 ══ -->
+    <!-- 行道樹 -->
     <div id="page-trees" class="page active">
         <div class="page-title">🌳 行道樹管理</div>
         <div class="page-sub">新增 / 查看 / 刪除行道樹，操作後自動重算受影響路段</div>
-
         <div class="toolbar">
             <div class="search-box">
                 <span>🔍</span>
-                <input type="text" id="treeSearch" placeholder="搜尋 ID 或行政區..." oninput="deb(loadTrees,400)()">
+                <input type="text" id="treeSearch" placeholder="搜尋 ID 或行政區..." oninput="deb(loadTrees,'trees')()">
             </div>
             <div class="flex gap-8">
                 <select id="treeDist" onchange="treePage=1;loadTrees()" style="font-size:13px;">
@@ -178,7 +159,6 @@
                 <button class="btn btn-primary" onclick="openModal('addTreeModal')">＋ 新增</button>
             </div>
         </div>
-
         <div class="table-wrap">
             <table>
                 <thead><tr><th>ID</th><th>行政區</th><th>緯度</th><th>經度</th><th>樹高 m</th><th>樹冠半徑 m</th><th>安全島</th><th>操作</th></tr></thead>
@@ -194,16 +174,14 @@
         </div>
     </div>
 
-    <!-- ══ 騎樓 ══ -->
+    <!-- 騎樓 -->
     <div id="page-arcades" class="page">
         <div class="page-title">🏘️ 騎樓管理</div>
         <div class="page-sub">新增 / 查看 / 刪除騎樓，操作後自動重算受影響路段</div>
-
         <div class="toolbar">
             <div style="font-size:13px;color:var(--text-dim);" id="arcadeCount">—</div>
             <button class="btn btn-primary" onclick="openModal('addArcadeModal')">＋ 新增</button>
         </div>
-
         <div class="table-wrap">
             <table>
                 <thead><tr><th>ID</th><th>所屬建築 B_ID</th><th>行政區</th><th>面積 m²</th><th>長度 m</th><th>操作</th></tr></thead>
@@ -219,15 +197,14 @@
         </div>
     </div>
 
-    <!-- ══ 建築物 ══ -->
+    <!-- 建築物 -->
     <div id="page-buildings" class="page">
         <div class="page-title">🏗️ 建築物管理</div>
         <div class="page-sub">新增 / 查看 / 刪除建築物，操作後自動重算受影響路段</div>
-
         <div class="toolbar">
             <div class="search-box">
                 <span>🔍</span>
-                <input type="text" id="buildSearch" placeholder="搜尋 ID 或行政區..." oninput="deb(loadBuildings,400)()">
+                <input type="text" id="buildSearch" placeholder="搜尋 ID 或行政區..." oninput="deb(loadBuildings,'buildings')()">
             </div>
             <div class="flex gap-8">
                 <select id="buildDist" onchange="buildPage=1;loadBuildings()" style="font-size:13px;">
@@ -239,7 +216,6 @@
                 <button class="btn btn-primary" onclick="openModal('addBuildModal')">＋ 新增</button>
             </div>
         </div>
-
         <div class="table-wrap">
             <table>
                 <thead><tr><th>ID</th><th>行政區</th><th>高度 m</th><th>操作</th></tr></thead>
@@ -255,38 +231,35 @@
         </div>
     </div>
 
-    <!-- ══ Edge 查詢 ══ -->
+    <!-- Edge 查詢 -->
     <div id="page-edge" class="page">
         <div class="page-title">🛤️ Edge 查詢</div>
         <div class="page-sub">輸入 Edge ID，查看該路段各時段（9~17點）的 shade_score 與 cost</div>
-
         <div class="card" style="margin-bottom:20px;">
             <div class="card-title">輸入 Edge ID</div>
             <div class="flex gap-8 items-center">
                 <input type="number" id="edgeIdInput" placeholder="例：12345" min="1"
                     style="width:200px;" onkeydown="if(event.key==='Enter')queryEdge()">
-                <button class="btn btn-primary" onclick="queryEdge()">查詢</button>
+                <button class="btn btn-primary" id="edgeQueryBtn" onclick="queryEdge()">查詢</button>
             </div>
         </div>
-
         <div id="edgeResult" style="display:none;">
             <div class="card" style="margin-bottom:14px;">
                 <div class="card-title">路段資訊</div>
-                <div id="edgeInfo" style="font-size:13px; display:grid; grid-template-columns:repeat(3,1fr); gap:8px;"></div>
+                <div id="edgeInfo" style="font-size:13px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
             </div>
             <div class="card">
                 <div class="card-title">各時段遮陰</div>
                 <div class="hour-grid" id="hourlyGrid"></div>
             </div>
         </div>
-        <div id="edgeEmpty" style="display:none; color:var(--text-dim); font-size:13px; padding:20px 0;">找不到該 Edge，請確認 ID 是否正確。</div>
+        <div id="edgeMsg" style="display:none;font-size:13px;padding:20px 0;color:var(--text-dim);"></div>
     </div>
 
-    <!-- ══ 手動重算 ══ -->
+    <!-- 手動重算 -->
     <div id="page-recalc" class="page">
         <div class="page-title">🔄 手動重算</div>
         <div class="page-sub">新增或刪除資料後，若需要手動補算，可在此觸發</div>
-
         <div class="card" style="max-width:480px;">
             <div class="card-title">觸發重算</div>
             <div class="form-group" style="margin-bottom:14px;">
@@ -302,7 +275,6 @@
                 <input type="number" id="recalcId" placeholder="輸入對應的 ID" min="1">
             </div>
             <button class="btn btn-success" onclick="doRecalc()" id="recalcBtn" style="width:100%;">▶ 開始重算</button>
-
             <div class="result-box" id="recalcResult"></div>
         </div>
     </div>
@@ -341,7 +313,7 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeModal('addTreeModal')">取消</button>
-            <button class="btn btn-primary" onclick="addTree()">新增</button>
+            <button class="btn btn-primary" id="addTreeBtn" onclick="addTree()">新增</button>
         </div>
     </div>
 </div>
@@ -366,7 +338,7 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeModal('addArcadeModal')">取消</button>
-            <button class="btn btn-primary" onclick="addArcade()">新增</button>
+            <button class="btn btn-primary" id="addArcadeBtn" onclick="addArcade()">新增</button>
         </div>
     </div>
 </div>
@@ -391,19 +363,33 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeModal('addBuildModal')">取消</button>
-            <button class="btn btn-primary" onclick="addBuilding()">新增</button>
+            <button class="btn btn-primary" id="addBuildBtn" onclick="addBuilding()">新增</button>
         </div>
     </div>
 </div>
 
 <script>
-const API      = 'https://clench-outrank-moustache.ngrok-free.dev';
-const PAGE_SZ  = 50;
+const API     = 'https://clench-outrank-moustache.ngrok-free.dev';
+const PAGE_SZ = 50;
 let treePage   = 1, treeTotal   = 0;
 let arcadePage = 1, arcadeTotal = 0;
 let buildPage  = 1, buildTotal  = 0;
 
-// ── 工具 ────────────────────────────────────────
+// ── fetch with timeout ───────────────────────────
+async function apiFetch(url, options = {}, timeoutMs = 60000) {
+    const ctrl = new AbortController();
+    const tid  = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+        return await fetch(url, { ...options, signal: ctrl.signal });
+    } catch(e) {
+        if (e.name === 'AbortError') throw new Error('請求逾時（超過 60 秒），請稍後再試');
+        throw e;
+    } finally {
+        clearTimeout(tid);
+    }
+}
+
+// ── toast ────────────────────────────────────────
 function toast(msg, type = 'ok') {
     const el = document.getElementById('toast');
     el.textContent = (type === 'ok' ? '✅ ' : '❌ ') + msg;
@@ -411,14 +397,16 @@ function toast(msg, type = 'ok') {
     setTimeout(() => el.classList.remove('show'), 3200);
 }
 
-let _dTimers = {};
-function deb(fn, ms) {
+// ── debounce（用字串 key 區分不同輸入框）────────
+const _dTimers = {};
+function deb(fn, key) {
     return (...args) => {
-        clearTimeout(_dTimers[fn]);
-        _dTimers[fn] = setTimeout(() => fn(...args), ms);
+        clearTimeout(_dTimers[key]);
+        _dTimers[key] = setTimeout(() => fn(...args), 400);
     };
 }
 
+// ── 頁面切換 ─────────────────────────────────────
 function go(name, el) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -429,18 +417,27 @@ function go(name, el) {
     if (name === 'buildings') { buildPage=1;  loadBuildings();}
 }
 
-function openModal(id)  { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+// ── Modal（關閉時清空 input / textarea）──────────
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+    document.querySelectorAll(`#${id} input, #${id} textarea`)
+            .forEach(el => el.value = '');
+}
 
-function setPager(prevId, nextId, infoId, page, total, load) {
+// ── 分頁控制 ─────────────────────────────────────
+function setPager(prevId, nextId, infoId, page, total) {
     const offset = (page - 1) * PAGE_SZ;
     const end    = Math.min(offset + PAGE_SZ, total);
-    document.getElementById(infoId).textContent = total ? `第 ${offset+1}–${end} 筆，共 ${total.toLocaleString()} 筆` : '無資料';
+    document.getElementById(infoId).textContent =
+        total ? `第 ${offset+1}–${end} 筆，共 ${total.toLocaleString()} 筆` : '無資料';
     document.getElementById(prevId).disabled = page <= 1;
     document.getElementById(nextId).disabled = offset + PAGE_SZ >= total;
 }
 
-// ── 行道樹 ──────────────────────────────────────
+// ════════════════════════════════════════
+// 行道樹
+// ════════════════════════════════════════
 async function loadTrees() {
     const dist   = document.getElementById('treeDist').value;
     const search = document.getElementById('treeSearch').value;
@@ -448,7 +445,7 @@ async function loadTrees() {
     const tbody  = document.getElementById('treeTbody');
     tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-dim);padding:28px;">讀取中...</td></tr>`;
     try {
-        const r    = await fetch(`${API}/api/admin/trees?limit=${PAGE_SZ}&offset=${offset}&dist=${encodeURIComponent(dist)}&search=${encodeURIComponent(search)}`);
+        const r    = await apiFetch(`${API}/api/admin/trees?limit=${PAGE_SZ}&offset=${offset}&dist=${encodeURIComponent(dist)}&search=${encodeURIComponent(search)}`);
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         treeTotal = data.total;
@@ -460,11 +457,14 @@ async function loadTrees() {
                 <td class="mono">${t.lng?.toFixed(5)||'—'}</td>
                 <td class="mono">${t.t_height?.toFixed(1)||'—'}</td>
                 <td class="mono">${t.canopy_radius?.toFixed(2)||'—'}</td>
-                <td>${t.traffic_island?'<span class="badge badge-yellow">是</span>':'<span class="badge badge-green">否</span>'}</td>
-                <td><button class="btn btn-danger" style="padding:3px 9px;font-size:11px;" onclick="delTree(${t.t_id})">刪除</button></td>
+                <td>${t.traffic_island
+                    ? '<span class="badge badge-yellow">是</span>'
+                    : '<span class="badge badge-green">否</span>'}</td>
+                <td><button class="btn btn-danger" style="padding:3px 9px;font-size:11px;"
+                    onclick="delTree(${t.t_id}, this)">刪除</button></td>
             </tr>`).join('')
             : `<tr><td colspan="8" style="text-align:center;color:var(--text-dim);padding:36px;">沒有資料</td></tr>`;
-        setPager('treePrev','treeNext','treePagerInfo', treePage, treeTotal, loadTrees);
+        setPager('treePrev','treeNext','treePagerInfo', treePage, treeTotal);
     } catch(e) {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--red);padding:28px;">${e.message}</td></tr>`;
     }
@@ -474,38 +474,52 @@ async function addTree() {
     const lat = parseFloat(document.getElementById('tLat').value);
     const lng = parseFloat(document.getElementById('tLng').value);
     if (!lat || !lng) { toast('請填入緯度與經度', 'err'); return; }
+
+    const btn = document.getElementById('addTreeBtn');
+    btn.disabled = true; btn.textContent = '新增中...';
     try {
-        const r    = await fetch(`${API}/api/admin/trees`, { method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ t_dist: document.getElementById('tDist').value, lat, lng,
-                t_height: parseFloat(document.getElementById('tHeight').value),
+        const r    = await apiFetch(`${API}/api/admin/trees`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                t_dist: document.getElementById('tDist').value, lat, lng,
+                t_height:      parseFloat(document.getElementById('tHeight').value),
                 canopy_radius: parseFloat(document.getElementById('tCanopy').value),
-                traffic_island: document.getElementById('tIsland').value === 'true' }) });
+                traffic_island: document.getElementById('tIsland').value === 'true'
+            })
+        });
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         closeModal('addTreeModal');
         loadTrees();
         toast(`樹木 ${data.t_id} 新增完成，重算了 ${data.edges_updated} 條路段`);
     } catch(e) { toast(e.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = '新增'; }
 }
 
-async function delTree(id) {
+async function delTree(id, btnEl) {
     if (!confirm(`確定刪除樹木 ${id}？`)) return;
+    btnEl.disabled = true; btnEl.textContent = '刪除中...';
     try {
-        const r    = await fetch(`${API}/api/admin/trees/${id}`, { method:'DELETE' });
+        const r    = await apiFetch(`${API}/api/admin/trees/${id}`, { method:'DELETE' });
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         loadTrees();
         toast(`樹木 ${id} 已刪除，重算了 ${data.edges_updated} 條路段`);
-    } catch(e) { toast(e.message, 'err'); }
+    } catch(e) {
+        btnEl.disabled = false; btnEl.textContent = '刪除';
+        toast(e.message, 'err');
+    }
 }
 
-// ── 騎樓 ────────────────────────────────────────
+// ════════════════════════════════════════
+// 騎樓
+// ════════════════════════════════════════
 async function loadArcades() {
     const offset = (arcadePage - 1) * PAGE_SZ;
     const tbody  = document.getElementById('arcadeTbody');
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:28px;">讀取中...</td></tr>`;
     try {
-        const r    = await fetch(`${API}/api/admin/arcades?limit=${PAGE_SZ}&offset=${offset}`);
+        const r    = await apiFetch(`${API}/api/admin/arcades?limit=${PAGE_SZ}&offset=${offset}`);
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         arcadeTotal = data.total;
@@ -517,10 +531,11 @@ async function loadArcades() {
                 <td><span class="badge badge-blue">${a.a_dist||'—'}</span></td>
                 <td class="mono">${a.a_area?.toFixed(1)||'—'}</td>
                 <td class="mono">${a.a_length?.toFixed(1)||'—'}</td>
-                <td><button class="btn btn-danger" style="padding:3px 9px;font-size:11px;" onclick="delArcade(${a.a_id})">刪除</button></td>
+                <td><button class="btn btn-danger" style="padding:3px 9px;font-size:11px;"
+                    onclick="delArcade(${a.a_id}, this)">刪除</button></td>
             </tr>`).join('')
             : `<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:36px;">沒有資料</td></tr>`;
-        setPager('arcadePrev','arcadeNext','arcadePagerInfo', arcadePage, arcadeTotal, loadArcades);
+        setPager('arcadePrev','arcadeNext','arcadePagerInfo', arcadePage, arcadeTotal);
     } catch(e) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--red);padding:28px;">${e.message}</td></tr>`;
     }
@@ -531,30 +546,44 @@ async function addArcade() {
     if (!raw) { toast('請填入 GeoJSON', 'err'); return; }
     let geojson;
     try { geojson = JSON.parse(raw); } catch { toast('GeoJSON 格式錯誤', 'err'); return; }
+
+    const btn = document.getElementById('addArcadeBtn');
+    btn.disabled = true; btn.textContent = '新增中...';
     try {
-        const r    = await fetch(`${API}/api/admin/arcades`, { method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ a_dist: document.getElementById('aDist').value,
-                b_id: parseInt(document.getElementById('aBid').value)||null, geojson }) });
+        const r    = await apiFetch(`${API}/api/admin/arcades`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                a_dist: document.getElementById('aDist').value,
+                b_id: parseInt(document.getElementById('aBid').value)||null, geojson
+            })
+        });
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         closeModal('addArcadeModal');
         loadArcades();
         toast(`騎樓 ${data.a_id} 新增完成，重算了 ${data.edges_updated} 條路段`);
     } catch(e) { toast(e.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = '新增'; }
 }
 
-async function delArcade(id) {
+async function delArcade(id, btnEl) {
     if (!confirm(`確定刪除騎樓 ${id}？`)) return;
+    btnEl.disabled = true; btnEl.textContent = '刪除中...';
     try {
-        const r    = await fetch(`${API}/api/admin/arcades/${id}`, { method:'DELETE' });
+        const r    = await apiFetch(`${API}/api/admin/arcades/${id}`, { method:'DELETE' });
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         loadArcades();
         toast(`騎樓 ${id} 已刪除，重算了 ${data.edges_updated} 條路段`);
-    } catch(e) { toast(e.message, 'err'); }
+    } catch(e) {
+        btnEl.disabled = false; btnEl.textContent = '刪除';
+        toast(e.message, 'err');
+    }
 }
 
-// ── 建築物 ──────────────────────────────────────
+// ════════════════════════════════════════
+// 建築物
+// ════════════════════════════════════════
 async function loadBuildings() {
     const dist   = document.getElementById('buildDist').value;
     const search = document.getElementById('buildSearch').value;
@@ -562,7 +591,7 @@ async function loadBuildings() {
     const tbody  = document.getElementById('buildTbody');
     tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:28px;">讀取中...</td></tr>`;
     try {
-        const r    = await fetch(`${API}/api/admin/buildings?limit=${PAGE_SZ}&offset=${offset}&dist=${encodeURIComponent(dist)}&search=${encodeURIComponent(search)}`);
+        const r    = await apiFetch(`${API}/api/admin/buildings?limit=${PAGE_SZ}&offset=${offset}&dist=${encodeURIComponent(dist)}&search=${encodeURIComponent(search)}`);
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         buildTotal = data.total;
@@ -571,10 +600,11 @@ async function loadBuildings() {
                 <td class="mono" style="font-size:12px;">${b.b_id}</td>
                 <td><span class="badge badge-blue">${b.b_dist||'未知'}</span></td>
                 <td class="mono">${b.b_height?.toFixed(1)||'—'} m</td>
-                <td><button class="btn btn-danger" style="padding:3px 9px;font-size:11px;" onclick="delBuilding(${b.b_id})">刪除</button></td>
+                <td><button class="btn btn-danger" style="padding:3px 9px;font-size:11px;"
+                    onclick="delBuilding(${b.b_id}, this)">刪除</button></td>
             </tr>`).join('')
             : `<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:36px;">沒有資料</td></tr>`;
-        setPager('buildPrev','buildNext','buildPagerInfo', buildPage, buildTotal, loadBuildings);
+        setPager('buildPrev','buildNext','buildPagerInfo', buildPage, buildTotal);
     } catch(e) {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--red);padding:28px;">${e.message}</td></tr>`;
     }
@@ -583,41 +613,70 @@ async function loadBuildings() {
 async function addBuilding() {
     const wkt = document.getElementById('bWkt').value.trim();
     if (!wkt) { toast('請填入 WKT 輪廓', 'err'); return; }
+
+    const btn = document.getElementById('addBuildBtn');
+    btn.disabled = true; btn.textContent = '新增中...';
     try {
-        const r    = await fetch(`${API}/api/admin/buildings`, { method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ b_dist: document.getElementById('bDist').value,
-                b_height: parseFloat(document.getElementById('bHeight').value), footprint_wkt: wkt }) });
+        const r    = await apiFetch(`${API}/api/admin/buildings`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                b_dist: document.getElementById('bDist').value,
+                b_height: parseFloat(document.getElementById('bHeight').value),
+                footprint_wkt: wkt
+            })
+        });
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         closeModal('addBuildModal');
         loadBuildings();
         toast(`建築物 ${data.b_id} 新增完成，重算了 ${data.edges_updated} 條路段`);
     } catch(e) { toast(e.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = '新增'; }
 }
 
-async function delBuilding(id) {
+async function delBuilding(id, btnEl) {
     if (!confirm(`確定刪除建築物 ${id}？`)) return;
+    btnEl.disabled = true; btnEl.textContent = '刪除中...';
     try {
-        const r    = await fetch(`${API}/api/admin/buildings/${id}`, { method:'DELETE' });
+        const r    = await apiFetch(`${API}/api/admin/buildings/${id}`, { method:'DELETE' });
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
         loadBuildings();
         toast(`建築物 ${id} 已刪除，重算了 ${data.edges_updated} 條路段`);
-    } catch(e) { toast(e.message, 'err'); }
+    } catch(e) {
+        btnEl.disabled = false; btnEl.textContent = '刪除';
+        toast(e.message, 'err');
+    }
 }
 
-// ── Edge 查詢 ────────────────────────────────────
+// ════════════════════════════════════════
+// Edge 查詢
+// ════════════════════════════════════════
 async function queryEdge() {
-    const id = document.getElementById('edgeIdInput').value;
+    const id     = document.getElementById('edgeIdInput').value;
+    const btn    = document.getElementById('edgeQueryBtn');
+    const result = document.getElementById('edgeResult');
+    const msg    = document.getElementById('edgeMsg');
     if (!id) { toast('請輸入 Edge ID', 'err'); return; }
-    document.getElementById('edgeResult').style.display = 'none';
-    document.getElementById('edgeEmpty').style.display  = 'none';
-    try {
-        const r    = await fetch(`${API}/api/admin/edges/${id}`);
-        const data = await r.json();
-        if (data.status !== 'success' || !data.data) { document.getElementById('edgeEmpty').style.display = 'block'; return; }
 
+    result.style.display = 'none';
+    msg.style.display    = 'block';
+    msg.style.color      = 'var(--text-dim)';
+    msg.textContent      = '查詢中...';
+    btn.disabled         = true;
+
+    try {
+        const r    = await apiFetch(`${API}/api/admin/edges/${id}`);
+        const data = await r.json();
+
+        if (data.status !== 'success' || !data.data) {
+            msg.textContent = '找不到該 Edge，請確認 ID 是否正確。';
+            return;
+        }
+
+        msg.style.display = 'none';
         const { edge, hourly } = data.data;
+
         document.getElementById('edgeInfo').innerHTML = `
             <div><div style="font-size:11px;color:var(--text-dim);">Edge ID</div><div class="mono">${edge.edge_id}</div></div>
             <div><div style="font-size:11px;color:var(--text-dim);">Source → Target</div><div class="mono">${edge.source} → ${edge.target}</div></div>
@@ -626,8 +685,7 @@ async function queryEdge() {
 
         document.getElementById('hourlyGrid').innerHTML = hourly.length
             ? hourly.map(h => {
-                const score = (h.shade_score || 0);
-                const pct   = Math.round(score * 100);
+                const pct   = Math.round((h.shade_score || 0) * 100);
                 const color = pct > 60 ? 'var(--blue)' : pct > 30 ? 'var(--yellow)' : 'var(--red)';
                 return `<div class="hour-card">
                     <div class="hour-label">${h.hour}:00</div>
@@ -638,37 +696,46 @@ async function queryEdge() {
             }).join('')
             : '<div style="color:var(--text-dim);font-size:13px;">此 Edge 尚無陰影計算資料</div>';
 
-        document.getElementById('edgeResult').style.display = 'block';
-    } catch(e) { toast(e.message, 'err'); }
+        result.style.display = 'block';
+    } catch(e) {
+        msg.style.color = 'var(--red)';
+        msg.textContent = `查詢失敗：${e.message}`;
+    } finally {
+        btn.disabled = false;
+    }
 }
 
-// ── 手動重算 ─────────────────────────────────────
+// ════════════════════════════════════════
+// 手動重算
+// ════════════════════════════════════════
 async function doRecalc() {
     const type = document.getElementById('recalcType').value;
     const id   = parseInt(document.getElementById('recalcId').value);
     if (!id) { toast('請填入 ID', 'err'); return; }
 
     const btn = document.getElementById('recalcBtn');
-    btn.disabled = true; btn.textContent = '重算中...';
-
     const box = document.getElementById('recalcResult');
+    btn.disabled = true; btn.textContent = '重算中...';
     box.style.display = 'block';
-    box.textContent = `$ [${new Date().toLocaleTimeString()}] 開始重算 ${type} id=${id}...`;
+    box.style.color   = 'var(--green)';
+    box.textContent   = `$ [${new Date().toLocaleTimeString()}] 開始重算 ${type} id=${id}...\n$ 重算可能需要數十秒，請耐心等待`;
 
     try {
-        const r    = await fetch(`${API}/api/admin/recalculate`, { method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ type, id }) });
+        const r    = await apiFetch(`${API}/api/admin/recalculate`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ type, id })
+        });
         const data = await r.json();
         if (data.status !== 'success') throw new Error(data.message);
-        box.textContent += `\n$ 完成！影響 ${data.edges_count} 條 edge，更新 ${data.rows_updated} 筆資料`;
+        box.textContent += `\n$ ✅ 完成！影響 ${data.edges_count} 條 edge，更新 ${data.rows_updated} 筆資料`;
         toast(`重算完成，更新了 ${data.rows_updated} 筆`);
     } catch(e) {
-        box.textContent += `\n$ 錯誤：${e.message}`;
-        box.style.color = 'var(--red)';
+        box.style.color  = 'var(--red)';
+        box.textContent += `\n$ ❌ 錯誤：${e.message}`;
         toast(e.message, 'err');
+    } finally {
+        btn.disabled = false; btn.textContent = '▶ 開始重算';
     }
-
-    btn.disabled = false; btn.textContent = '▶ 開始重算';
 }
 
 // 初始載入
