@@ -423,6 +423,14 @@ async function reverseGeocode(lat, lng) {
 // ── 計算路徑（60 秒 timeout）──────────────────────
 async function calcRoute() {
     if (!state.start || !state.end) return;
+    const dist = getDistance(
+        state.start.lat, state.start.lng,
+        state.end.lat, state.end.lng
+    );
+    if (dist > 5000) {
+        alert('走太遠會中暑喔，逼逼，重來 🙏');
+        return;
+    }
 
     document.getElementById('loading').classList.remove('hidden');
     clearRoute();
