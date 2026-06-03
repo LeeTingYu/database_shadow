@@ -1,42 +1,33 @@
 """
-admin_routes.py
+admin_routes.py（修正版）
 
-管理者後端 API
-掛載方式：在 app_v2.py 用 register_blueprint(admin_bp)
+修正項目：
+  1. 統一使用 db.py 的 connection pool，移除重複的 DB_CONFIG 與 get_conn()
+  2. 所有路由改用 try/finally 確保連線一定歸還，避免洩漏
+  3. edge_shadow 欄位統一：新增 shade_score 欄位說明，
+     若資料表無此欄位請執行 migration SQL（見底部說明）
+  4. 全量重算加上 confirm_full_recalc 確認機制
 """
 
 from flask import Blueprint, request, jsonify
-import psycopg2
 from psycopg2.extras import RealDictCursor
 import json
+
+from db import get_conn, release_conn   # ← 統一使用共用 pool
 
 admin_bp = Blueprint("admin", __name__)
 
 # ──────────────────────────────────────────
-# DB 設定
+# 常數設定
 # ──────────────────────────────────────────
-DB_CONFIG = {
-    "host":     "localhost",
-    "port":     5432,
-    "database": "shadow",
-    "user":     "postgres",
-    "password": "123456",
-}
-
 TARGET_DATE = "2026-06-21"
 
-# 遮蔭來源權重（和 datong_weighted_erd.py 一致）
-ARCADE_WEIGHT   = 1.0
-BUILDING_WEIGHT = 0.7
-TREE_WEIGHT     = 0.5
-ALPHA           = 0.8
-
+ARCADE_WEIGHT          = 1.0
+BUILDING_WEIGHT        = 0.7
+TREE_WEIGHT            = 0.5
+ALPHA                  = 0.8
 ARCADE_NEAR_DISTANCE_M = 5.0
 METRIC_SRID            = 3826
-
-
-def get_conn():
-    return psycopg2.connect(**DB_CONFIG)
 
 
 # ══════════════════════════════════════════
@@ -46,9 +37,9 @@ def get_conn():
 @admin_bp.route("/api/admin/trees", methods=["GET"])
 def list_trees():
     """查看所有樹"""
+    conn = get_conn()
     try:
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
             SELECT
                 t_id,
@@ -66,10 +57,11 @@ def list_trees():
         """)
         rows = cur.fetchall()
         cur.close()
-        conn.close()
         return jsonify({"status": "success", "data": rows})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 @admin_bp.route("/api/admin/trees", methods=["POST"])
@@ -78,6 +70,7 @@ def create_tree():
     新增一棵樹
     Body: { lat, lng, t_dist, t_height, canopy_radius, traffic_island }
     """
+    conn = get_conn()
     try:
         data           = request.json
         lat            = float(data["lat"])
@@ -87,8 +80,7 @@ def create_tree():
         canopy_radius  = float(data.get("canopy_radius", 3.0))
         traffic_island = bool(data.get("traffic_island", False))
 
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
             INSERT INTO tree (t_dist, t_geom, t_height, canopy_radius, traffic_island, created_at)
             VALUES (
@@ -103,7 +95,6 @@ def create_tree():
         new_id = cur.fetchone()["t_id"]
         conn.commit()
         cur.close()
-        conn.close()
         return jsonify({
             "status":  "success",
             "message": f"樹 {new_id} 新增成功，請記得執行重算",
@@ -114,14 +105,16 @@ def create_tree():
         return jsonify({"status": "error", "message": f"缺少欄位：{e}"}), 400
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 @admin_bp.route("/api/admin/trees/<int:t_id>", methods=["DELETE"])
 def delete_tree(t_id):
     """軟刪除一棵樹"""
+    conn = get_conn()
     try:
-        conn = get_conn()
-        cur  = conn.cursor()
+        cur = conn.cursor()
         cur.execute("""
             UPDATE tree SET delete_at = NOW()
             WHERE t_id = %s AND delete_at IS NULL
@@ -129,18 +122,18 @@ def delete_tree(t_id):
 
         if cur.rowcount == 0:
             cur.close()
-            conn.close()
             return jsonify({"status": "error", "message": "找不到該樹或已刪除"}), 404
 
         conn.commit()
         cur.close()
-        conn.close()
         return jsonify({
             "status":  "success",
             "message": f"樹 {t_id} 已刪除，請記得執行重算",
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 # ══════════════════════════════════════════
@@ -150,9 +143,9 @@ def delete_tree(t_id):
 @admin_bp.route("/api/admin/arcades", methods=["GET"])
 def list_arcades():
     """查看所有騎樓"""
+    conn = get_conn()
     try:
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
             SELECT
                 a_id,
@@ -169,10 +162,11 @@ def list_arcades():
         """)
         rows = cur.fetchall()
         cur.close()
-        conn.close()
         return jsonify({"status": "success", "data": rows})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 @admin_bp.route("/api/admin/arcades", methods=["POST"])
@@ -181,14 +175,14 @@ def create_arcade():
     新增騎樓
     Body: { geojson: <GeoJSON geometry>, a_dist, b_id }
     """
+    conn = get_conn()
     try:
         data        = request.json
         geojson_str = json.dumps(data["geojson"])
         a_dist      = data.get("a_dist", "")
         b_id        = data.get("b_id")
 
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
             INSERT INTO arcade (b_id, a_dist, geom, created_at)
             VALUES (
@@ -202,7 +196,6 @@ def create_arcade():
         new_id = cur.fetchone()["a_id"]
         conn.commit()
         cur.close()
-        conn.close()
         return jsonify({
             "status":  "success",
             "message": f"騎樓 {new_id} 新增成功，請記得執行重算",
@@ -213,14 +206,16 @@ def create_arcade():
         return jsonify({"status": "error", "message": f"缺少欄位：{e}"}), 400
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 @admin_bp.route("/api/admin/arcades/<int:a_id>", methods=["DELETE"])
 def delete_arcade(a_id):
     """軟刪除騎樓"""
+    conn = get_conn()
     try:
-        conn = get_conn()
-        cur  = conn.cursor()
+        cur = conn.cursor()
         cur.execute("""
             UPDATE arcade SET delete_at = NOW()
             WHERE a_id = %s AND delete_at IS NULL
@@ -228,18 +223,18 @@ def delete_arcade(a_id):
 
         if cur.rowcount == 0:
             cur.close()
-            conn.close()
             return jsonify({"status": "error", "message": "找不到該騎樓或已刪除"}), 404
 
         conn.commit()
         cur.close()
-        conn.close()
         return jsonify({
             "status":  "success",
             "message": f"騎樓 {a_id} 已刪除，請記得執行重算",
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 # ══════════════════════════════════════════
@@ -249,9 +244,9 @@ def delete_arcade(a_id):
 @admin_bp.route("/api/admin/buildings", methods=["GET"])
 def list_buildings():
     """查看所有建築"""
+    conn = get_conn()
     try:
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
             SELECT
                 b_id,
@@ -266,10 +261,11 @@ def list_buildings():
         """)
         rows = cur.fetchall()
         cur.close()
-        conn.close()
         return jsonify({"status": "success", "data": rows})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 @admin_bp.route("/api/admin/buildings", methods=["POST"])
@@ -278,14 +274,14 @@ def create_building():
     新增建築
     Body: { geojson: <GeoJSON geometry>, b_dist, b_height }
     """
+    conn = get_conn()
     try:
         data        = request.json
         geojson_str = json.dumps(data["geojson"])
         b_dist      = data.get("b_dist", "")
         b_height    = float(data.get("b_height", 15.0))
 
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
             INSERT INTO building (b_dist, geom, b_height, created_at)
             VALUES (
@@ -300,7 +296,6 @@ def create_building():
         new_id = cur.fetchone()["b_id"]
         conn.commit()
         cur.close()
-        conn.close()
         return jsonify({
             "status":  "success",
             "message": f"建築 {new_id} 新增成功，請記得執行重算",
@@ -311,14 +306,16 @@ def create_building():
         return jsonify({"status": "error", "message": f"缺少欄位：{e}"}), 400
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 @admin_bp.route("/api/admin/buildings/<int:b_id>", methods=["DELETE"])
 def delete_building(b_id):
     """軟刪除建築"""
+    conn = get_conn()
     try:
-        conn = get_conn()
-        cur  = conn.cursor()
+        cur = conn.cursor()
         cur.execute("""
             UPDATE building SET delete_at = NOW()
             WHERE b_id = %s AND delete_at IS NULL
@@ -326,18 +323,18 @@ def delete_building(b_id):
 
         if cur.rowcount == 0:
             cur.close()
-            conn.close()
             return jsonify({"status": "error", "message": "找不到該建築或已刪除"}), 404
 
         conn.commit()
         cur.close()
-        conn.close()
         return jsonify({
             "status":  "success",
             "message": f"建築 {b_id} 已刪除，請記得執行重算",
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 # ══════════════════════════════════════════
@@ -347,12 +344,12 @@ def delete_building(b_id):
 @admin_bp.route("/api/admin/edges", methods=["GET"])
 def list_edges():
     """
-    查看所有 edge 的 cost
+    查看所有 edge 的 cost / shade_score
     Query param: hour（可選，不傳就回傳所有時段的平均）
     """
+    conn = get_conn()
     try:
         hour = request.args.get("hour", type=int)
-        conn = get_conn()
         cur  = conn.cursor(cursor_factory=RealDictCursor)
 
         if hour:
@@ -393,18 +390,19 @@ def list_edges():
 
         rows = cur.fetchall()
         cur.close()
-        conn.close()
         return jsonify({"status": "success", "data": rows, "count": len(rows)})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 @admin_bp.route("/api/admin/edges/<int:edge_id>", methods=["GET"])
 def get_edge_detail(edge_id):
     """查看單一 edge 在各時段的 shade_score + cost"""
+    conn = get_conn()
     try:
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
 
         cur.execute("""
             SELECT
@@ -422,7 +420,6 @@ def get_edge_detail(edge_id):
         edge_info = cur.fetchone()
         if not edge_info:
             cur.close()
-            conn.close()
             return jsonify({"status": "error", "message": "找不到該 edge"}), 404
 
         cur.execute("""
@@ -442,8 +439,6 @@ def get_edge_detail(edge_id):
 
         hourly = cur.fetchall()
         cur.close()
-        conn.close()
-
         return jsonify({
             "status": "success",
             "data": {
@@ -453,6 +448,8 @@ def get_edge_detail(edge_id):
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
 
 
 # ══════════════════════════════════════════
@@ -692,38 +689,50 @@ def _recalculate_edges(conn, cur, edge_ids: list) -> int:
 def recalculate():
     """
     手動觸發重算
-    Body: { type: 'tree'|'arcade'|'building', id: <int> }
-    不傳 type/id 就重算所有 edge（很慢，謹慎使用）
+    Body:
+      { "type": "tree"|"arcade"|"building", "id": <int> }   ← 單筆重算
+      { "confirm_full_recalc": true }                        ← 全量重算（很慢）
     """
+    conn = get_conn()
     try:
         data        = request.json or {}
         target_type = data.get("type")
         target_id   = data.get("id")
 
-        conn = get_conn()
-        cur  = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
 
         if target_type and target_id:
+            # ── 單筆重算 ──────────────────────────────────────────────
             edge_ids = _find_affected_edges(cur, target_type, int(target_id))
             if not edge_ids:
                 cur.close()
-                conn.close()
                 return jsonify({
                     "status":  "success",
                     "message": "沒有受影響的 edge，不需要重算",
                     "updated": 0,
                 })
             scope = f"{target_type} id={target_id}，受影響 edge：{edge_ids}"
+
         else:
+            # ── 全量重算：需要明確確認 ────────────────────────────────
+            if not data.get("confirm_full_recalc"):
+                cur.close()
+                return jsonify({
+                    "status":  "error",
+                    "message": (
+                        "全量重算會耗費大量時間與資源，"
+                        "請加上 confirm_full_recalc: true 確認後再送出"
+                    ),
+                }), 400
+
             cur.execute("SELECT edge_id FROM edge")
             edge_ids = [r["edge_id"] for r in cur.fetchall()]
-            scope    = "全部 edge"
+            scope    = f"全部 edge（共 {len(edge_ids)} 條）"
 
         print(f"[重算] {scope}")
         updated = _recalculate_edges(conn, cur, edge_ids)
         conn.commit()
         cur.close()
-        conn.close()
 
         return jsonify({
             "status":       "success",
@@ -736,3 +745,20 @@ def recalculate():
         import traceback
         print(traceback.format_exc())
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        release_conn(conn)
+
+
+# ══════════════════════════════════════════
+# 📋 Migration 說明
+# ══════════════════════════════════════════
+#
+# 若 edge_shadow 資料表尚未有 shade_score 欄位，請執行：
+#
+#   ALTER TABLE edge_shadow
+#     ADD COLUMN IF NOT EXISTS shade_score DOUBLE PRECISION;
+#
+#   -- 補上 UNIQUE 約束（ON CONFLICT 需要）
+#   ALTER TABLE edge_shadow
+#     ADD CONSTRAINT edge_shadow_edge_sun_unique UNIQUE (edge_id, sun_id);
+#
